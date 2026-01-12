@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Financial{% endblock %}
+{% block content %}
+    <h1>Financial</h1>
+    <a href="{{ url_for('financial.create') }}">Add Transaction</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Student</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.amount }}</td>
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.student.user.username }}</td>
+                <td>{{ transaction.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
