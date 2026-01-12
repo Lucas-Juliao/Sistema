@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Courses{% endblock %}
+{% block content %}
+    <h1>Courses</h1>
+    <a href="{{ url_for('courses.create') }}">Add Course</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Teacher</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ course.name }}</td>
+                <td>{{ course.teacher.user.username }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

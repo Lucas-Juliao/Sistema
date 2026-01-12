@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Create Course{% endblock %}
+{% block content %}
+    <h1>Create Course</h1>
+    <form method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="teacher_id">Teacher:</label>
+        <select id="teacher_id" name="teacher_id" required>
+            {% for teacher in teachers %}
+            <option value="{{ teacher.id }}">{{ teacher.user.username }}</option>
+            {% endfor %}
+        </select><br><br>
+        <button type="submit">Create</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Teachers{% endblock %}
+{% block content %}
+    <h1>Teachers</h1>
+    <a href="{{ url_for('teachers.create') }}">Add Teacher</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Hire Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for teacher in teachers %}
+            <tr>
+                <td>{{ teacher.user.username }}</td>
+                <td>{{ teacher.user.email }}</td>
+                <td>{{ teacher.hire_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
