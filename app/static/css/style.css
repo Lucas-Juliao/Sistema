@@ -22,12 +22,13 @@ body {
 /* Sidebar Styles */
 .sidebar {
     width: 250px;
-    background-color: var(--bg-white);
+    background-color: var(--primary-blue);
     border-right: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
     transition: width 0.3s;
     overflow: hidden;
+    color: white;
 }
 
 .sidebar.collapsed {
@@ -45,7 +46,6 @@ body {
 .sidebar-header {
     padding: 20px;
     text-align: center;
-    border-bottom: 1px solid var(--border-color);
     background-color: var(--primary-blue);
     color: white;
 }
@@ -80,17 +80,17 @@ body {
     align-items: center;
     padding: 12px 20px;
     text-decoration: none;
-    color: var(--text-dark);
+    color: rgba(255, 255, 255, 0.8);
     transition: all 0.2s;
 }
 
 .sidebar-nav li a:hover {
-    background-color: var(--light-blue);
-    color: var(--primary-blue);
+    background-color: var(--hover-blue);
+    color: white;
 }
 
 .sidebar-nav li a.active {
-    background-color: var(--primary-blue);
+    background-color: var(--hover-blue);
     color: white;
 }
 
