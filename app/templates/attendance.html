@@ -3,17 +3,29 @@
 {% block title %}Assinatura de Aulas - Safira MusiCloud{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-check-square me-2"></i> Assinatura de Presença</h2>
-    <button class="btn btn-primary" onclick="openModal('addModal')">
-        <i class="fas fa-edit me-1"></i> Nova Assinatura
+<div class="breadcrumb-path">
+    <a href="{{ url_for('main.menu') }}">Menu</a> > <span>Assinatura de Presença</span>
+</div>
+
+<div class="filter-bar mb-3">
+    <div class="input-group">
+        <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar aluno, curso, professor...">
+        <button class="btn btn-outline-primary" type="button" id="filterBtn">
+            <i class="fas fa-filter me-1"></i> Filtrar
+        </button>
+    </div>
+</div>
+
+<div class="d-flex justify-content-start mb-2">
+    <button class="btn-subtle" onclick="openModal('addModal')">
+        <i class="fas fa-plus-circle me-1"></i> Nova assinatura
     </button>
 </div>
 
 <div class="card shadow-sm border-0">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0" style="min-width: 800px;">
+            <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
                         <th class="ps-4">Data</th>
@@ -25,42 +37,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in attendances %}
-                    <tr>
-                        <td class="ps-4 align-middle">
-                            {{ item.date }}
-                        </td>
-                        <td class="align-middle">
-                            <strong>{{ item.student_name }}</strong>
-                        </td>
-                        <td class="align-middle">
-                            {{ item.course_name or 'Aula Instrumental' }}
-                        </td>
-                        <td class="align-middle text-muted">
-                            {{ item.teacher_name }}
-                        </td>
-                        <td class="align-middle">
-                            <span class="badge {{ 'bg-success' if item.status == 'presente' else 'bg-danger' }}">
-                                {{ item.status | capitalize }}
-                            </span>
-                        </td>
-                        <td class="text-center pe-4 align-middle">
-                            <a href="{{ url_for('main.delete_attendance', id=item.id) }}" class="btn btn-sm btn-light text-danger border" onclick="return confirm('Excluir registro?')">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="fas fa-clipboard-list fa-3x mb-3 d-block"></i>
-                            Nenhuma aula assinada ainda.
-                        </td>
-                    </tr>
-                    {% endfor %}
+                    <!-- JS vai carregar os dados aqui -->
                 </tbody>
             </table>
         </div>
+        <div class="pagination-container" id="pagination"></div>
     </div>
 </div>
 
@@ -116,6 +97,99 @@
 </div>
 
 <script>
+    const allData = [
+        {% for item in attendances %}
+        {
+            id: "{{ item.id }}",
+            date: "{{ item.date }}",
+            student_name: "{{ item.student_name }}",
+            course_name: "{{ item.course_name or 'Aula Instrumental' }}",
+            teacher_name: "{{ item.teacher_name }}",
+            status: "{{ item.status }}",
+            statusDisplay: "{{ item.status | capitalize }}",
+            badgeClass: "{{ 'bg-success' if item.status == 'presente' else 'bg-danger' }}"
+        },
+        {% endfor %}
+    ];
+
+    let filteredData = [];
+    const itemsPerPage = 5;
+    let currentPage = 1;
+
+    function renderTable() {
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.innerHTML = '';
+
+        if (filteredData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
+            document.getElementById('pagination').innerHTML = '';
+            return;
+        }
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageData = filteredData.slice(start, end);
+
+        pageData.forEach(item => {
+            const row = `
+                <tr>
+                    <td class="ps-4 align-middle">${item.date}</td>
+                    <td class="align-middle"><strong>${item.student_name}</strong></td>
+                    <td class="align-middle">${item.course_name}</td>
+                    <td class="align-middle text-muted">${item.teacher_name}</td>
+                    <td class="align-middle">
+                        <span class="badge ${item.badgeClass}">
+                            ${item.statusDisplay}
+                        </span>
+                    </td>
+                    <td class="text-center pe-4 align-middle">
+                        <a href="/attendance/delete/${item.id}" class="btn btn-sm btn-light text-danger border" onclick="return confirm('Excluir registro?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const container = document.getElementById('pagination');
+        container.innerHTML = '';
+        const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+        if (totalPages <= 1) return;
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.innerText = i;
+            btn.className = `btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+            btn.onclick = () => {
+                currentPage = i;
+                renderTable();
+            };
+            container.appendChild(btn);
+        }
+    }
+
+    document.getElementById('filterBtn').addEventListener('click', () => {
+        const term = document.getElementById('searchInput').value.toLowerCase();
+        filteredData = allData.filter(item =>
+            item.student_name.toLowerCase().includes(term) ||
+            item.course_name.toLowerCase().includes(term) ||
+            item.teacher_name.toLowerCase().includes(term) ||
+            item.date.includes(term)
+        );
+        currentPage = 1;
+        renderTable();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTable();
+    });
+
     function openModal(id) {
         document.getElementById(id).style.display = "block";
     }

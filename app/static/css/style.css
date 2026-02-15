@@ -224,3 +224,47 @@ main {
 .text-blue {
     color: var(--primary-blue) !important;
 }
+
+.breadcrumb-path {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.breadcrumb-path a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.breadcrumb-path a:hover {
+    color: var(--primary-blue);
+}
+
+.breadcrumb-path span {
+    color: var(--primary-blue);
+    font-weight: 600;
+}
+
+.btn-subtle {
+    background: none;
+    border: none;
+    color: #ced4da;
+    font-size: 0.75rem;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-subtle:hover {
+    color: #adb5bd;
+}
+
+.pagination-container {
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    background-color: #fff;
+    border-top: 1px solid var(--border-color);
+}

@@ -3,17 +3,29 @@
 {% block title %}Pessoas - Safira MusiCloud{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-users me-2"></i> Cadastro de Pessoas</h2>
-    <button class="btn btn-primary" onclick="openModal('addModal')">
-        <i class="fas fa-plus me-1"></i> Nova Pessoa
+<div class="breadcrumb-path">
+    <a href="{{ url_for('main.menu') }}">Menu</a> > <span>Cadastro de Pessoas</span>
+</div>
+
+<div class="filter-bar mb-3">
+    <div class="input-group">
+        <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar por nome, e-mail...">
+        <button class="btn btn-outline-primary" type="button" id="filterBtn">
+            <i class="fas fa-filter me-1"></i> Filtrar
+        </button>
+    </div>
+</div>
+
+<div class="d-flex justify-content-start mb-2">
+    <button class="btn-subtle" onclick="openModal('addModal')">
+        <i class="fas fa-plus-circle me-1"></i> Inserir nova pessoa
     </button>
 </div>
 
 <div class="card shadow-sm border-0">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0" style="min-width: 800px;">
+            <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
                         <th class="ps-4" style="width: 30%;">Nome</th>
@@ -24,42 +36,12 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for person in people %}
-                    <tr>
-                        <td class="ps-4 align-middle">
-                            <div class="d-flex align-items-center">
-                                <div class="rounded-circle bg-blue text-white d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px; flex-shrink: 0;">
-                                    {{ person.name[0] | upper }}
-                                </div>
-                                <span class="text-truncate" style="max-width: 200px;"><strong>{{ person.name }}</strong></span>
-                            </div>
-                        </td>
-                        <td class="align-middle">
-                            <span class="badge {{ 'bg-info' if person.type == 'teacher' else 'bg-success' }}" style="width: 80px;">
-                                {{ 'Professor' if person.type == 'teacher' else 'Aluno' }}
-                            </span>
-                        </td>
-                        <td class="align-middle text-muted">{{ person.email or '-' }}</td>
-                        <td class="align-middle text-muted">{{ person.phone or '-' }}</td>
-                        <td class="text-center pe-4 align-middle">
-                            <button class="btn btn-sm btn-light text-primary border me-1" title="Editar" onclick="openEditModal('{{ person.id }}', '{{ person.name }}', '{{ person.type }}', '{{ person.email or '' }}', '{{ person.phone or '' }}')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <a href="{{ url_for('main.delete_person', id=person.id) }}" class="btn btn-sm btn-light text-danger border" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir?')">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">
-                            <i class="fas fa-user-slash fa-3x mb-3 d-block"></i>
-                            Nenhuma pessoa cadastrada.
-                        </td>
-                    </tr>
-                    {% endfor %}
+                    <!-- JS vai carregar os dados aqui -->
                 </tbody>
             </table>
+        </div>
+        <div class="pagination-container" id="pagination">
+            <!-- Pagination buttons will be injected here -->
         </div>
     </div>
 </div>
@@ -135,6 +117,107 @@
 </div>
 
 <script>
+    const allData = [
+        {% for person in people %}
+        {
+            id: "{{ person.id }}",
+            name: "{{ person.name }}",
+            type: "{{ person.type }}",
+            email: "{{ person.email or '' }}",
+            phone: "{{ person.phone or '' }}",
+            typeDisplay: "{{ 'Professor' if person.type == 'teacher' else 'Aluno' }}",
+            badgeClass: "{{ 'bg-info' if person.type == 'teacher' else 'bg-success' }}"
+        },
+        {% endfor %}
+    ];
+
+    let filteredData = [];
+    const itemsPerPage = 5;
+    let currentPage = 1;
+
+    function renderTable() {
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.innerHTML = '';
+
+        if (filteredData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
+            document.getElementById('pagination').innerHTML = '';
+            return;
+        }
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageData = filteredData.slice(start, end);
+
+        pageData.forEach(person => {
+            const row = `
+                <tr>
+                    <td class="ps-4 align-middle">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-blue text-white d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px; flex-shrink: 0;">
+                                ${person.name[0].toUpperCase()}
+                            </div>
+                            <span class="text-truncate" style="max-width: 200px;"><strong>${person.name}</strong></span>
+                        </div>
+                    </td>
+                    <td class="align-middle">
+                        <span class="badge ${person.badgeClass}" style="width: 80px;">
+                            ${person.typeDisplay}
+                        </span>
+                    </td>
+                    <td class="align-middle text-muted">${person.email || '-'}</td>
+                    <td class="align-middle text-muted">${person.phone || '-'}</td>
+                    <td class="text-center pe-4 align-middle">
+                        <button class="btn btn-sm btn-light text-primary border me-1" title="Editar" onclick="openEditModal('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <a href="/people/delete/${person.id}" class="btn btn-sm btn-light text-danger border" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const container = document.getElementById('pagination');
+        container.innerHTML = '';
+        const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+        if (totalPages <= 1) return;
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.innerText = i;
+            btn.className = `btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+            btn.onclick = () => {
+                currentPage = i;
+                renderTable();
+            };
+            container.appendChild(btn);
+        }
+    }
+
+    document.getElementById('filterBtn').addEventListener('click', () => {
+        const term = document.getElementById('searchInput').value.toLowerCase();
+        filteredData = allData.filter(item =>
+            item.name.toLowerCase().includes(term) ||
+            item.email.toLowerCase().includes(term) ||
+            item.phone.toLowerCase().includes(term)
+        );
+        currentPage = 1;
+        renderTable();
+    });
+
+    // Inicializar tabela vazia
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTable();
+    });
+
     function openModal(id) {
         document.getElementById(id).style.display = "block";
     }
