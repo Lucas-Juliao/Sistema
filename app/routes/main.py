@@ -1,21 +1,18 @@
-from flask import Blueprint, render_template, redirect, url_for
-from flask_login import login_required
+from flask import Blueprint, render_template, redirect, url_for, session
+from .auth import login_required
 
 main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
+    if 'user_id' in session:
+        return redirect(url_for('main.menu'))
     return redirect(url_for('auth.login'))
 
 @main_bp.route('/menu')
 @login_required
 def menu():
     return render_template('menu.html')
-
-@main_bp.route('/dashboard')
-@login_required
-def dashboard():
-    return render_template('dashboard.html')
 
 @main_bp.route('/people')
 @login_required

@@ -1,19 +1,19 @@
-# Safira Music Cloud
+# Safira Music Cloud (Versão Simplificada)
 
 Sistema de gestão para escolas de música.
+Esta versão foi otimizada para rodar com o mínimo de dependências possíveis, usando o banco de dados `sqlite3` nativo do Python.
 
 ## Como rodar o sistema
-
-O sistema foi configurado para ser iniciado de forma simples. Siga os passos abaixo:
 
 1. **Instalar dependências:**
    No terminal, na raiz do projeto, execute:
    ```bash
    pip install -r requirements.txt
    ```
+   *Nota: Agora você só precisa do Flask instalado.*
 
 2. **Iniciar o sistema:**
-   O único arquivo que você precisa executar é o `run.py` que está na raiz do projeto:
+   Execute o arquivo `run.py` que está na raiz do projeto:
    ```bash
    python run.py
    ```
@@ -23,4 +23,4 @@ O sistema foi configurado para ser iniciado de forma simples. Siga os passos aba
    - **Usuário:** `adm`
    - **Senha:** `adm`
 
-**Observação:** O arquivo `run.py` irá automaticamente configurar o banco de dados e o usuário de acesso na primeira vez que for executado.
+O sistema irá criar automaticamente o banco de dados na primeira execução.

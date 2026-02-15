@@ -30,7 +30,7 @@
                 <h2>{% block header_title %}{% endblock %}</h2>
             </div>
             <div class="user-info" style="margin-left: auto; display: flex; align-items: center;">
-                <span style="margin-right: 10px;">Olá, {{ current_user.username }}</span>
+                <span style="margin-right: 10px;">Olá, {{ session.username }}</span>
                 <i class="fas fa-user-circle fa-2x"></i>
             </div>
         </header>
