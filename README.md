@@ -2,34 +2,25 @@
 
 Sistema de gestão para escolas de música.
 
-## Como configurar e rodar o projeto
+## Como rodar o sistema
+
+O sistema foi configurado para ser iniciado de forma simples. Siga os passos abaixo:
 
 1. **Instalar dependências:**
-   Certifique-se de ter o Python instalado. No terminal, na raiz do projeto, execute:
+   No terminal, na raiz do projeto, execute:
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Inicializar o Banco de Dados:**
-   Execute os seguintes comandos para criar as tabelas:
-   ```bash
-   set FLASK_APP=run.py
-   flask db init
-   flask db migrate -m "Primeira migracao"
-   flask db upgrade
-   ```
-
-3. **Criar usuário Administrador:**
-   Para criar o usuário `adm` com senha `adm`, execute:
-   ```bash
-   python create_admin.py
-   ```
-
-4. **Rodar o sistema:**
-   **IMPORTANTE:** Sempre rode o sistema através do arquivo `run.py`. Não execute arquivos dentro da pasta `app/` diretamente.
+2. **Iniciar o sistema:**
+   O único arquivo que você precisa executar é o `run.py` que está na raiz do projeto:
    ```bash
    python run.py
    ```
 
-O sistema estará disponível em `http://127.0.0.1:5000/`.
-O acesso principal após o login é pela rota `/menu`.
+3. **Acessar e Logar:**
+   - Abra o navegador em: `http://127.0.0.1:5000/`
+   - **Usuário:** `adm`
+   - **Senha:** `adm`
+
+**Observação:** O arquivo `run.py` irá automaticamente configurar o banco de dados e o usuário de acesso na primeira vez que for executado.
