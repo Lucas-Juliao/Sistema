@@ -1,4 +1,4 @@
-# Safira Music Cloud (Versão Simplificada)
+# Safira MusiCloud (Versão Simplificada)
 
 Sistema de gestão para escolas de música.
 Esta versão foi otimizada para rodar com o mínimo de dependências possíveis, usando o banco de dados `sqlite3` nativo do Python.

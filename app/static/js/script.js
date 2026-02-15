@@ -1,14 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const menuToggle = document.querySelector('.menu-toggle');
-    const sidebar = document.querySelector('.sidebar');
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
 
-    if (menuToggle && sidebar) {
+    if (menuToggle && sidebar && overlay) {
         menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
 
-            // Optional: Adjust main content margin if needed
-            // const mainContent = document.querySelector('.main-content');
-            // mainContent.style.marginLeft = sidebar.classList.contains('collapsed') ? '80px' : '250px';
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
         });
     }
 
