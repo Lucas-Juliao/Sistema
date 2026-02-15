@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Cursos - Safira Music Cloud{% endblock %}
+{% block header_title %}Cursos{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <form id="course-form">
+        <div class="form-group">
+            <label for="course_name">Nome do Curso</label>
+            <input type="text" id="course_name" name="course_name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="workload">Carga Horária (horas)</label>
+            <input type="number" id="workload" name="workload" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="teacher">Professor Responsável</label>
+            <select id="teacher" name="teacher" class="form-control" required>
+                <option value="">Selecione um professor...</option>
+                <option value="1">Maria Oliveira</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-primary">Criar Curso</button>
+    </form>
+</div>
+{% endblock %}

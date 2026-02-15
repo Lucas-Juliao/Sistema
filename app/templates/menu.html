@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Menu Principal - Safira Music Cloud{% endblock %}
+{% block header_title %}Menu Principal{% endblock %}
+
+{% block content %}
+<div class="content-cards">
+    <div class="card" onclick="location.href='{{ url_for('main.people') }}'" style="cursor: pointer;">
+        <i class="fas fa-user-friends fa-3x" style="color: #0056b3;"></i>
+        <h3>Cadastro de Pessoas</h3>
+        <p>Alunos e Professores</p>
+    </div>
+    <div class="card" onclick="location.href='{{ url_for('main.courses') }}'" style="cursor: pointer;">
+        <i class="fas fa-music fa-3x" style="color: #0056b3;"></i>
+        <h3>Cursos</h3>
+        <p>Gestão de cursos e cargas horárias</p>
+    </div>
+    <div class="card" onclick="location.href='{{ url_for('main.schedule') }}'" style="cursor: pointer;">
+        <i class="fas fa-calendar-alt fa-3x" style="color: #0056b3;"></i>
+        <h3>Agenda</h3>
+        <p>Disponibilidade de professores</p>
+    </div>
+    <div class="card" onclick="location.href='{{ url_for('main.attendance') }}'" style="cursor: pointer;">
+        <i class="fas fa-check-square fa-3x" style="color: #0056b3;"></i>
+        <h3>Assinatura de Aulas</h3>
+        <p>Presença dos alunos</p>
+    </div>
+    <div class="card" onclick="location.href='{{ url_for('main.finance') }}'" style="cursor: pointer;">
+        <i class="fas fa-dollar-sign fa-3x" style="color: #0056b3;"></i>
+        <h3>Financeiro</h3>
+        <p>Contas a pagar e receber</p>
+    </div>
+</div>
+
+<style>
+    .card {
+        text-align: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .card i {
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}

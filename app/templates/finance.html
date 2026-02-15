@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Financeiro - Safira Music Cloud{% endblock %}
+{% block header_title %}Financeiro{% endblock %}
+
+{% block content %}
+<div class="content-cards" style="margin-bottom: 30px;">
+    <div class="card" style="border-left: 5px solid #28a745;">
+        <h3 style="color: #28a745;">A Receber</h3>
+        <p style="font-size: 1.5rem; font-weight: bold;">R$ 0,00</p>
+    </div>
+    <div class="card" style="border-left: 5px solid #dc3545;">
+        <h3 style="color: #dc3545;">A Pagar</h3>
+        <p style="font-size: 1.5rem; font-weight: bold;">R$ 0,00</p>
+    </div>
+</div>
+
+<div class="form-container">
+    <h3>Novo Lançamento</h3>
+    <form id="finance-form">
+        <div class="form-group">
+            <label for="description">Descrição</label>
+            <input type="text" id="description" name="description" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="amount">Valor</label>
+            <input type="number" step="0.01" id="amount" name="amount" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="finance_type">Tipo</label>
+            <select id="finance_type" name="finance_type" class="form-control" required>
+                <option value="income">Receita (A Receber)</option>
+                <option value="expense">Despesa (A Pagar)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="due_date">Vencimento</label>
+            <input type="date" id="due_date" name="due_date" class="form-control" required>
+        </div>
+        <button type="submit" class="btn-primary">Lançar no Sistema</button>
+    </form>
+</div>
+{% endblock %}

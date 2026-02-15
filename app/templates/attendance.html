@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Assinatura de Aula - Safira Music Cloud{% endblock %}
+{% block header_title %}Assinatura de Aula{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <form id="attendance-form">
+        <div class="form-group">
+            <label for="student">Aluno</label>
+            <select id="student" name="student" class="form-control" required>
+                <option value="1">João Silva</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="course_att">Curso</label>
+            <select id="course_att" name="course_att" class="form-control" required>
+                <option value="1">Violão Clássico</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="date">Data da Aula</label>
+            <input type="date" id="date" name="date" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="participated" name="participated" checked> Aluno participou da aula
+            </label>
+        </div>
+        <button type="submit" class="btn-primary">Registrar Presença</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,23 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Admin Dashboard{% endblock %}</title>
+    <title>{% block title %}Safira Music Cloud{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 </head>
 <body>
     <div class="sidebar">
         <div class="sidebar-header">
-            <h3>Admin Panel</h3>
+            <h3>Safira Music</h3>
         </div>
         <ul class="sidebar-nav">
-            <li><a href="{{ url_for('main.dashboard') }}" class="nav-link" data-path="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-            <li><a href="{{ url_for('main.users') }}" class="nav-link" data-path="/users"><i class="fas fa-users"></i> Users</a></li>
-            <li><a href="#" class="nav-link"><i class="fas fa-chart-bar"></i> Reports</a></li>
-            <li><a href="{{ url_for('main.settings') }}" class="nav-link" data-path="/settings"><i class="fas fa-cogs"></i> Settings</a></li>
+            <li><a href="{{ url_for('main.menu') }}" class="nav-link"><i class="fas fa-home"></i> <span>Menu Principal</span></a></li>
+            <li><a href="{{ url_for('main.people') }}" class="nav-link"><i class="fas fa-user-friends"></i> <span>Pessoas</span></a></li>
+            <li><a href="{{ url_for('main.courses') }}" class="nav-link"><i class="fas fa-music"></i> <span>Cursos</span></a></li>
+            <li><a href="{{ url_for('main.schedule') }}" class="nav-link"><i class="fas fa-calendar-alt"></i> <span>Agenda</span></a></li>
+            <li><a href="{{ url_for('main.attendance') }}" class="nav-link"><i class="fas fa-check-square"></i> <span>Assinatura</span></a></li>
+            <li><a href="{{ url_for('main.finance') }}" class="nav-link"><i class="fas fa-dollar-sign"></i> <span>Financeiro</span></a></li>
+            <li style="margin-top: auto;"><a href="{{ url_for('auth.logout') }}" class="nav-link"><i class="fas fa-sign-out-alt"></i> <span>Sair</span></a></li>
         </ul>
     </div>
 
@@ -26,6 +28,10 @@
             <button class="menu-toggle"><i class="fas fa-bars"></i></button>
             <div class="header-title">
                 <h2>{% block header_title %}{% endblock %}</h2>
+            </div>
+            <div class="user-info" style="margin-left: auto; display: flex; align-items: center;">
+                <span style="margin-right: 10px;">Olá, {{ current_user.username }}</span>
+                <i class="fas fa-user-circle fa-2x"></i>
             </div>
         </header>
 

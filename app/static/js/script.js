@@ -1,19 +1,22 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     const menuToggle = document.querySelector('.menu-toggle');
     const sidebar = document.querySelector('.sidebar');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const currentPath = window.location.pathname;
 
-    // Sidebar toggle
-    if (menuToggle) {
-        menuToggle.addEventListener('click', () => {
+    if (menuToggle && sidebar) {
+        menuToggle.addEventListener('click', function() {
             sidebar.classList.toggle('collapsed');
+
+            // Optional: Adjust main content margin if needed
+            // const mainContent = document.querySelector('.main-content');
+            // mainContent.style.marginLeft = sidebar.classList.contains('collapsed') ? '80px' : '250px';
         });
     }
 
-    // Set active nav link
+    // Highlight active nav link
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
     navLinks.forEach(link => {
-        if (link.getAttribute('data-path') === currentPath) {
+        if (link.getAttribute('href') === currentPath) {
             link.classList.add('active');
         }
     });
