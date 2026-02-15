@@ -52,7 +52,20 @@ body {
 
 .sidebar-header h3 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sidebar-header i {
+    font-size: 1.4rem;
+}
+
+.brand-cloud {
+    font-weight: 300;
+    opacity: 0.9;
 }
 
 .sidebar-nav {
