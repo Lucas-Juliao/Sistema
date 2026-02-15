@@ -1,43 +1,192 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}Financeiro - Safira MusiCloud{% endblock %}
-{% block header_title %}Financeiro{% endblock %}
 
 {% block content %}
-<div class="content-cards" style="margin-bottom: 30px;">
-    <div class="card" style="border-left: 5px solid #28a745;">
-        <h3 style="color: #28a745;">A Receber</h3>
-        <p style="font-size: 1.5rem; font-weight: bold;">R$ 0,00</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-dollar-sign me-2"></i> Controle Financeiro</h2>
+    <button class="btn btn-primary" onclick="openModal('addModal')">
+        <i class="fas fa-plus me-1"></i> Nova Transação
+    </button>
+</div>
+
+<!-- Resumo -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 border-start border-success border-4">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">Total Receitas</h6>
+                <h3 class="text-success mb-0">R$ {{ "%.2f"|format(total_receita) }}</h3>
+            </div>
+        </div>
     </div>
-    <div class="card" style="border-left: 5px solid #dc3545;">
-        <h3 style="color: #dc3545;">A Pagar</h3>
-        <p style="font-size: 1.5rem; font-weight: bold;">R$ 0,00</p>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 border-start border-danger border-4">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">Total Despesas</h6>
+                <h3 class="text-danger mb-0">R$ {{ "%.2f"|format(total_despesa) }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0 border-start border-primary border-4">
+            <div class="card-body">
+                <h6 class="text-muted mb-1">Saldo Atual</h6>
+                <h3 class="{{ 'text-success' if saldo >= 0 else 'text-danger' }} mb-0">R$ {{ "%.2f"|format(saldo) }}</h3>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="form-container">
-    <h3>Novo Lançamento</h3>
-    <form id="finance-form">
-        <div class="form-group">
-            <label for="description">Descrição</label>
-            <input type="text" id="description" name="description" class="form-control" required>
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" style="min-width: 800px;">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Data</th>
+                        <th>Descrição</th>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th class="text-center pe-4">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in transactions %}
+                    <tr>
+                        <td class="ps-4 align-middle">{{ item.date }}</td>
+                        <td class="align-middle"><strong>{{ item.description }}</strong></td>
+                        <td class="align-middle">
+                            <span class="badge {{ 'bg-success' if item.type == 'receita' else 'bg-danger' }}">
+                                {{ item.type | capitalize }}
+                            </span>
+                        </td>
+                        <td class="align-middle {{ 'text-success' if item.type == 'receita' else 'text-danger' }} fw-bold">
+                            {{ ' ' if item.type == 'receita' else '-' }} R$ {{ "%.2f"|format(item.amount) }}
+                        </td>
+                        <td class="align-middle">
+                            <span class="badge bg-light text-dark border">
+                                {{ item.status | capitalize }}
+                            </span>
+                        </td>
+                        <td class="text-center pe-4 align-middle">
+                            <a href="{{ url_for('main.delete_transaction', id=item.id) }}" class="btn btn-sm btn-light text-danger border" onclick="return confirm('Excluir transação?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fas fa-coins fa-3x mb-3 d-block"></i>
+                            Nenhuma movimentação financeira.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        <div class="form-group">
-            <label for="amount">Valor</label>
-            <input type="number" step="0.01" id="amount" name="amount" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="finance_type">Tipo</label>
-            <select id="finance_type" name="finance_type" class="form-control" required>
-                <option value="income">Receita (A Receber)</option>
-                <option value="expense">Despesa (A Pagar)</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="due_date">Vencimento</label>
-            <input type="date" id="due_date" name="due_date" class="form-control" required>
-        </div>
-        <button type="submit" class="btn-primary">Lançar no Sistema</button>
-    </form>
+    </div>
 </div>
+
+<!-- Modal Adicionar -->
+<div id="addModal" class="modal-custom">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom">
+            <h5>Nova Transação</h5>
+            <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
+        </div>
+        <form action="{{ url_for('main.add_transaction') }}" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Descrição</label>
+                <input type="text" name="description" class="form-control" required placeholder="Ex: Mensalidade Aluno X">
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Valor (R$)</label>
+                    <input type="number" step="0.01" name="amount" class="form-control" required placeholder="0,00">
+                </div>
+                <div class="col">
+                    <label class="form-label">Data</label>
+                    <input type="date" name="date" class="form-control" required>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Tipo</label>
+                    <select name="type" class="form-select" required>
+                        <option value="receita">Receita (Entrada)</option>
+                        <option value="despesa">Despesa (Saída)</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select" required>
+                        <option value="pago">Confirmado / Pago</option>
+                        <option value="pendente">Pendente</option>
+                    </select>
+                </div>
+            </div>
+            <div class="text-end mt-4">
+                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Registrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-custom')) {
+            event.target.style.display = "none";
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.querySelector('input[type="date"]');
+        if (dateInput && !dateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+        }
+    });
+</script>
+
+<style>
+    .modal-custom {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content-custom {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 500px;
+        max-width: 90%;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .modal-header-custom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+</style>
 {% endblock %}

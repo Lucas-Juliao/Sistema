@@ -1,37 +1,232 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}Agenda - Safira MusiCloud{% endblock %}
-{% block header_title %}Agenda de Professores{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <form id="schedule-form">
-        <div class="form-group">
-            <label for="teacher_sched">Professor</label>
-            <select id="teacher_sched" name="teacher_sched" class="form-control" required>
-                <option value="1">Maria Oliveira</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="day_of_week">Dia da Semana</label>
-            <select id="day_of_week" name="day_of_week" class="form-control" required>
-                <option value="segunda">Segunda-feira</option>
-                <option value="terca">Terça-feira</option>
-                <option value="quarta">Quarta-feira</option>
-                <option value="quinta">Quinta-feira</option>
-                <option value="sexta">Sexta-feira</option>
-                <option value="sabado">Sábado</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="start_time">Horário de Início</label>
-            <input type="time" id="start_time" name="start_time" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="end_time">Horário de Término</label>
-            <input type="time" id="end_time" name="end_time" class="form-control" required>
-        </div>
-        <button type="submit" class="btn-primary">Configurar Disponibilidade</button>
-    </form>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar-alt me-2"></i> Gestão de Agenda</h2>
+    <button class="btn btn-primary" onclick="openModal('addModal')">
+        <i class="fas fa-plus me-1"></i> Novo Horário
+    </button>
 </div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" style="min-width: 800px;">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4" style="width: 25%;">Dia da Semana</th>
+                        <th style="width: 25%;">Professor</th>
+                        <th style="width: 20%;">Horário</th>
+                        <th style="width: 15%;">Curso</th>
+                        <th class="text-center pe-4" style="width: 15%;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in schedules %}
+                    <tr>
+                        <td class="ps-4 align-middle">
+                            <span class="text-capitalize fw-bold">{{ item.day_of_week }}</span>
+                        </td>
+                        <td class="align-middle">
+                            <i class="fas fa-user-tie me-1 text-muted"></i> {{ item.teacher_name }}
+                        </td>
+                        <td class="align-middle">
+                            <span class="badge bg-light text-dark border">
+                                {{ item.start_time }} - {{ item.end_time }}
+                            </span>
+                        </td>
+                        <td class="align-middle text-muted italic">
+                            {{ item.course_name or '-' }}
+                        </td>
+                        <td class="text-center pe-4 align-middle">
+                            <button class="btn btn-sm btn-light text-primary border me-1" title="Editar"
+                                onclick="openEditModal('{{ item.id }}', '{{ item.teacher_id }}', '{{ item.day_of_week }}', '{{ item.start_time }}', '{{ item.end_time }}', '{{ item.course_name or '' }}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <a href="{{ url_for('main.delete_schedule', id=item.id) }}" class="btn btn-sm btn-light text-danger border" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="fas fa-calendar-times fa-3x mb-3 d-block"></i>
+                            Nenhum horário agendado.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar -->
+<div id="addModal" class="modal-custom">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom">
+            <h5>Novo Horário na Agenda</h5>
+            <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
+        </div>
+        <form action="{{ url_for('main.add_schedule') }}" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Professor</label>
+                <select name="teacher_id" class="form-select" required>
+                    <option value="">Selecione um professor...</option>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Dia da Semana</label>
+                <select name="day_of_week" class="form-select" required>
+                    <option value="segunda-feira">Segunda-feira</option>
+                    <option value="terça-feira">Terça-feira</option>
+                    <option value="quarta-feira">Quarta-feira</option>
+                    <option value="quinta-feira">Quinta-feira</option>
+                    <option value="sexta-feira">Sexta-feira</option>
+                    <option value="sábado">Sábado</option>
+                    <option value="domingo">Domingo</option>
+                </select>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Hora Início</label>
+                    <input type="time" name="start_time" class="form-control" required>
+                </div>
+                <div class="col">
+                    <label class="form-label">Hora Fim</label>
+                    <input type="time" name="end_time" class="form-control" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Nome do Curso (Opcional)</label>
+                <input type="text" name="course_name" class="form-control" placeholder="Ex: Piano I">
+            </div>
+            <div class="text-end mt-4">
+                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Editar -->
+<div id="editModal" class="modal-custom">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom">
+            <h5>Editar Horário</h5>
+            <span class="close-custom" onclick="closeModal('editModal')">&times;</span>
+        </div>
+        <form id="editForm" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Professor</label>
+                <select name="teacher_id" id="editTeacherId" class="form-select" required>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Dia da Semana</label>
+                <select name="day_of_week" id="editDayOfWeek" class="form-select" required>
+                    <option value="segunda-feira">Segunda-feira</option>
+                    <option value="terça-feira">Terça-feira</option>
+                    <option value="quarta-feira">Quarta-feira</option>
+                    <option value="quinta-feira">Quinta-feira</option>
+                    <option value="sexta-feira">Sexta-feira</option>
+                    <option value="sábado">Sábado</option>
+                    <option value="domingo">Domingo</option>
+                </select>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Hora Início</label>
+                    <input type="time" name="start_time" id="editStartTime" class="form-control" required>
+                </div>
+                <div class="col">
+                    <label class="form-label">Hora Fim</label>
+                    <input type="time" name="end_time" id="editEndTime" class="form-control" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Nome do Curso</label>
+                <input type="text" name="course_name" id="editCourseName" class="form-control">
+            </div>
+            <div class="text-end mt-4">
+                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('editModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Atualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    function openEditModal(id, teacherId, day, start, end, course) {
+        const form = document.getElementById('editForm');
+        form.action = "/schedule/edit/" + id;
+        document.getElementById('editTeacherId').value = teacherId;
+        document.getElementById('editDayOfWeek').value = day;
+        document.getElementById('editStartTime').value = start;
+        document.getElementById('editEndTime').value = end;
+        document.getElementById('editCourseName').value = course;
+        openModal('editModal');
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-custom')) {
+            event.target.style.display = "none";
+        }
+    }
+</script>
+
+<style>
+    .modal-custom {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content-custom {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 500px;
+        max-width: 90%;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .modal-header-custom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .close-custom {
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .close-custom:hover {
+        color: #002b5c;
+    }
+</style>
 {% endblock %}

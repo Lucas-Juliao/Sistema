@@ -1,27 +1,195 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}Cursos - Safira MusiCloud{% endblock %}
-{% block header_title %}Cursos{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <form id="course-form">
-        <div class="form-group">
-            <label for="course_name">Nome do Curso</label>
-            <input type="text" id="course_name" name="course_name" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="workload">Carga Horária (horas)</label>
-            <input type="number" id="workload" name="workload" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="teacher">Professor Responsável</label>
-            <select id="teacher" name="teacher" class="form-control" required>
-                <option value="">Selecione um professor...</option>
-                <option value="1">Maria Oliveira</option>
-            </select>
-        </div>
-        <button type="submit" class="btn-primary">Criar Curso</button>
-    </form>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-music me-2"></i> Cadastro de Cursos</h2>
+    <button class="btn btn-primary" onclick="openModal('addModal')">
+        <i class="fas fa-plus me-1"></i> Novo Curso
+    </button>
 </div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" style="min-width: 800px;">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4" style="width: 35%;">Nome do Curso</th>
+                        <th style="width: 20%;">Carga Horária</th>
+                        <th style="width: 30%;">Professor Responsável</th>
+                        <th class="text-center pe-4" style="width: 15%;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td class="ps-4 align-middle">
+                            <strong>{{ course.name }}</strong>
+                        </td>
+                        <td class="align-middle">
+                            <span class="badge bg-light text-dark border">
+                                {{ course.workload or 0 }} horas
+                            </span>
+                        </td>
+                        <td class="align-middle text-muted">
+                            {% if course.teacher_name %}
+                                <i class="fas fa-chalkboard-teacher me-1"></i> {{ course.teacher_name }}
+                            {% else %}
+                                <span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i> Sem professor</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center pe-4 align-middle">
+                            <button class="btn btn-sm btn-light text-primary border me-1" title="Editar"
+                                onclick="openEditModal('{{ course.id }}', '{{ course.name }}', '{{ course.workload or '' }}', '{{ course.teacher_id or '' }}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <a href="{{ url_for('main.delete_course', id=course.id) }}" class="btn btn-sm btn-light text-danger border" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">
+                            <i class="fas fa-music fa-3x mb-3 d-block"></i>
+                            Nenhum curso cadastrado.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar -->
+<div id="addModal" class="modal-custom">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom">
+            <h5>Novo Curso</h5>
+            <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
+        </div>
+        <form action="{{ url_for('main.add_course') }}" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Nome do Curso</label>
+                <input type="text" name="name" class="form-control" required placeholder="Ex: Piano Clássico">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Carga Horária (horas)</label>
+                <input type="number" name="workload" class="form-control" placeholder="Ex: 40">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Professor</label>
+                <select name="teacher_id" class="form-select">
+                    <option value="">Selecione um professor...</option>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="text-end mt-4">
+                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Editar -->
+<div id="editModal" class="modal-custom">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom">
+            <h5>Editar Curso</h5>
+            <span class="close-custom" onclick="closeModal('editModal')">&times;</span>
+        </div>
+        <form id="editForm" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Nome do Curso</label>
+                <input type="text" name="name" id="editName" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Carga Horária (horas)</label>
+                <input type="number" name="workload" id="editWorkload" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Professor</label>
+                <select name="teacher_id" id="editTeacherId" class="form-select">
+                    <option value="">Selecione um professor...</option>
+                    {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="text-end mt-4">
+                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('editModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Atualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    function openEditModal(id, name, workload, teacherId) {
+        const form = document.getElementById('editForm');
+        form.action = "/courses/edit/" + id;
+        document.getElementById('editName').value = name;
+        document.getElementById('editWorkload').value = workload;
+        document.getElementById('editTeacherId').value = teacherId;
+        openModal('editModal');
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-custom')) {
+            event.target.style.display = "none";
+        }
+    }
+</script>
+
+<style>
+    .modal-custom {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content-custom {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 500px;
+        max-width: 90%;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .modal-header-custom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .close-custom {
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .close-custom:hover {
+        color: #002b5c;
+    }
+</style>
 {% endblock %}

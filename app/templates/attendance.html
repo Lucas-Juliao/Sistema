@@ -1,33 +1,177 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Assinatura de Aula - Safira MusiCloud{% endblock %}
-{% block header_title %}Assinatura de Aula{% endblock %}
+{% block title %}Assinatura de Aulas - Safira MusiCloud{% endblock %}
 
 {% block content %}
-<div class="form-container">
-    <form id="attendance-form">
-        <div class="form-group">
-            <label for="student">Aluno</label>
-            <select id="student" name="student" class="form-control" required>
-                <option value="1">João Silva</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="course_att">Curso</label>
-            <select id="course_att" name="course_att" class="form-control" required>
-                <option value="1">Violão Clássico</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="date">Data da Aula</label>
-            <input type="date" id="date" name="date" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label>
-                <input type="checkbox" id="participated" name="participated" checked> Aluno participou da aula
-            </label>
-        </div>
-        <button type="submit" class="btn-primary">Registrar Presença</button>
-    </form>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-check-square me-2"></i> Assinatura de Presença</h2>
+    <button class="btn btn-primary" onclick="openModal('addModal')">
+        <i class="fas fa-edit me-1"></i> Nova Assinatura
+    </button>
 </div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" style="min-width: 800px;">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Data</th>
+                        <th>Aluno</th>
+                        <th>Curso / Aula</th>
+                        <th>Professor</th>
+                        <th>Status</th>
+                        <th class="text-center pe-4">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in attendances %}
+                    <tr>
+                        <td class="ps-4 align-middle">
+                            {{ item.date }}
+                        </td>
+                        <td class="align-middle">
+                            <strong>{{ item.student_name }}</strong>
+                        </td>
+                        <td class="align-middle">
+                            {{ item.course_name or 'Aula Instrumental' }}
+                        </td>
+                        <td class="align-middle text-muted">
+                            {{ item.teacher_name }}
+                        </td>
+                        <td class="align-middle">
+                            <span class="badge {{ 'bg-success' if item.status == 'presente' else 'bg-danger' }}">
+                                {{ item.status | capitalize }}
+                            </span>
+                        </td>
+                        <td class="text-center pe-4 align-middle">
+                            <a href="{{ url_for('main.delete_attendance', id=item.id) }}" class="btn btn-sm btn-light text-danger border" onclick="return confirm('Excluir registro?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fas fa-clipboard-list fa-3x mb-3 d-block"></i>
+                            Nenhuma aula assinada ainda.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar -->
+<div id="addModal" class="modal-custom">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom">
+            <h5>Assinar Aula</h5>
+            <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
+        </div>
+        <form action="{{ url_for('main.add_attendance') }}" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Data da Aula</label>
+                <input type="date" name="date" class="form-control" required value="{{ now_date }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Aluno</label>
+                <select name="student_id" class="form-select" required>
+                    <option value="">Selecione o aluno...</option>
+                    {% for s in students %}
+                    <option value="{{ s.id }}">{{ s.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Aula / Horário</label>
+                <select name="schedule_id" class="form-select" required>
+                    <option value="">Selecione a aula...</option>
+                    {% for sch in schedules %}
+                    <option value="{{ sch.id }}">{{ sch.day_of_week | capitalize }} - {{ sch.start_time }} ({{ sch.course_name or 'Aula' }} - {{ sch.teacher_name }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Presença</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" value="presente" id="statusP" checked>
+                        <label class="form-check-label" for="statusP">Presente</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" value="ausente" id="statusA">
+                        <label class="form-check-label" for="statusA">Ausente</label>
+                    </div>
+                </div>
+            </div>
+            <div class="text-end mt-4">
+                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Registrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-custom')) {
+            event.target.style.display = "none";
+        }
+    }
+
+    // Set today's date in the input if it's empty
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.querySelector('input[type="date"]');
+        if (dateInput && !dateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+        }
+    });
+</script>
+
+<style>
+    .modal-custom {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content-custom {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 550px;
+        max-width: 90%;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .modal-header-custom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .close-custom {
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
 {% endblock %}

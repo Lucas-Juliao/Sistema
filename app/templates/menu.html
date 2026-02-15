@@ -1,48 +1,85 @@
 {% extends "base.html" %}
 
-{% block title %}Menu - Safira MusiCloud{% endblock %}
-{% block header_title %}Menu{% endblock %}
+{% block title %}Agenda do Dia - Safira MusiCloud{% endblock %}
 
 {% block content %}
-<div class="content-cards">
-    <div class="card" onclick="location.href='{{ url_for('main.people') }}'" style="cursor: pointer;">
-        <i class="fas fa-user-friends fa-3x" style="color: #002b5c;"></i>
-        <h3>Cadastro de Pessoas</h3>
-        <p>Alunos e Professores</p>
-    </div>
-    <div class="card" onclick="location.href='{{ url_for('main.courses') }}'" style="cursor: pointer;">
-        <i class="fas fa-music fa-3x" style="color: #002b5c;"></i>
-        <h3>Cursos</h3>
-        <p>Gestão de cursos e cargas horárias</p>
-    </div>
-    <div class="card" onclick="location.href='{{ url_for('main.schedule') }}'" style="cursor: pointer;">
-        <i class="fas fa-calendar-alt fa-3x" style="color: #002b5c;"></i>
-        <h3>Agenda</h3>
-        <p>Disponibilidade de professores</p>
-    </div>
-    <div class="card" onclick="location.href='{{ url_for('main.attendance') }}'" style="cursor: pointer;">
-        <i class="fas fa-check-square fa-3x" style="color: #002b5c;"></i>
-        <h3>Assinatura de Aulas</h3>
-        <p>Presença dos alunos</p>
-    </div>
-    <div class="card" onclick="location.href='{{ url_for('main.finance') }}'" style="cursor: pointer;">
-        <i class="fas fa-dollar-sign fa-3x" style="color: #002b5c;"></i>
-        <h3>Financeiro</h3>
-        <p>Contas a pagar e receber</p>
-    </div>
+<div class="schedule-container">
+    {% if schedules %}
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th>Professor</th>
+                        <th>Horário</th>
+                        <th>Curso</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in schedules %}
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-user-circle" style="color: var(--primary-blue); font-size: 1.5rem;"></i>
+                                <strong>{{ item.teacher_name }}</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge-time">{{ item.start_time }} - {{ item.end_time }}</span>
+                        </td>
+                        <td>{{ item.course_name }}</td>
+                        <td>
+                            <span class="status-indicator"></span> Disponível
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="card" style="text-align: center; padding: 40px;">
+            <i class="fas fa-calendar-times fa-4x" style="color: #ccc; margin-bottom: 20px;"></i>
+            <h3>Nenhuma aula agendada para hoje ({{ today }}).</h3>
+            <p>Use o menu lateral para gerenciar as agendas dos professores.</p>
+        </div>
+    {% endif %}
 </div>
 
 <style>
-    .card {
-        text-align: center;
-        transition: transform 0.2s, box-shadow 0.2s;
+    .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
     }
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    .schedule-table th {
+        background-color: #f8f9fa;
+        padding: 15px 20px;
+        text-align: left;
+        border-bottom: 2px solid var(--border-color);
+        color: var(--primary-blue);
+        font-weight: 600;
     }
-    .card i {
-        margin-bottom: 15px;
+    .schedule-table td {
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .schedule-table tr:last-child td {
+        border-bottom: none;
+    }
+    .badge-time {
+        background-color: var(--light-blue);
+        color: var(--primary-blue);
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+    .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background-color: #28a745;
+        border-radius: 50%;
+        margin-right: 5px;
     }
 </style>
 {% endblock %}

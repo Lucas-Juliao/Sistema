@@ -5,11 +5,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (menuToggle && sidebar && overlay) {
         menuToggle.addEventListener('click', function() {
+            menuToggle.classList.toggle('active');
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
         });
 
         overlay.addEventListener('click', function() {
+            menuToggle.classList.remove('active');
             sidebar.classList.remove('active');
             overlay.classList.remove('active');
         });
