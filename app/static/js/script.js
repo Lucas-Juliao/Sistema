@@ -27,4 +27,13 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.add('active');
         }
     });
+
+    // Auto-dismiss flash messages after 5 seconds
+    const alerts = document.querySelectorAll('.flash-messages-container .alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        }, 5000);
+    });
 });

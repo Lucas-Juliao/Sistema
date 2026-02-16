@@ -163,12 +163,12 @@
                 <tr class="fade-in" style="animation-delay: ${index * 0.05}s">
                     <td class="ps-4 align-middle">
                         <div class="dropdown">
-                            <button class="btn btn-link text-muted p-0 border-0 gear-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-link text-muted p-0 border-0 gear-icon" type="button" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false">
                                 <i class="fas fa-cog"></i>
                             </button>
                             <ul class="dropdown-menu shadow border">
-                                <li><button class="dropdown-item" type="button" onclick="alert('Funcionalidade de edição em desenvolvimento.')"><i class="fas fa-edit me-2 text-primary"></i> EDITAR</button></li>
-                                <li><button class="dropdown-item" type="button" onclick="alert('DESCRIÇÃO: ${item.description.toUpperCase()}\\nVALOR: R$ ${amountFormatted}\\nDATA: ${item.date}')"><i class="fas fa-eye me-2 text-info"></i> VISUALIZAR</button></li>
+                                <li><a class="dropdown-item" href="#" onclick="alert('Funcionalidade de edição em desenvolvimento.'); return false;"><i class="fas fa-edit me-2 text-primary"></i> EDITAR</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="alert('DESCRIÇÃO: ${item.description.toUpperCase()}\\nVALOR: R$ ${amountFormatted}\\nDATA: ${item.date}'); return false;"><i class="fas fa-eye me-2 text-info"></i> VISUALIZAR</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="/finance/delete/${item.id}" onclick="return confirm('Excluir transação?')"><i class="fas fa-trash me-2"></i> EXCLUIR</a></li>
                             </ul>
