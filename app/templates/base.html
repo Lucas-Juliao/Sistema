@@ -10,6 +10,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Force dropdown visibility and color */
+        .dropdown-menu {
+            min-width: 180px !important;
+            background-color: white !important;
+            border: 1px solid #dee2e6 !important;
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+        }
+        .dropdown-item {
+            color: #333 !important;
+            padding: 8px 16px !important;
+            display: block !important;
+            width: 100% !important;
+            text-align: left !important;
+            text-decoration: none !important;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa !important;
+        }
+    </style>
 </head>
 <body>
     <div class="overlay" id="overlay"></div>
@@ -50,20 +70,24 @@
     <div class="main-content">
         <main>
             <div class="container-fluid">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    {% for category, message in messages %}
-                      <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'info' }} alert-dismissible fade show shadow-sm border-0" role="alert">
-                        <i class="fas {{ 'fa-check-circle' if category == 'success' else 'fa-exclamation-circle' if category == 'error' else 'fa-info-circle' }} me-2"></i>
-                        {{ message | upper }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div>
-                    {% endfor %}
-                  {% endif %}
-                {% endwith %}
                 {% block content %}{% endblock %}
             </div>
         </main>
+    </div>
+
+    <!-- Flash Messages at Bottom -->
+    <div class="flash-messages-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'info' }} alert-dismissible fade show shadow border-0" role="alert">
+                <i class="fas {{ 'fa-check-circle' if category == 'success' else 'fa-exclamation-circle' if category == 'error' else 'fa-info-circle' }} me-2"></i>
+                {{ message | upper }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
     </div>
 
     <!-- Bootstrap 5 JS Bundle -->

@@ -357,9 +357,33 @@ textarea {
 
 .dropdown-item {
     transition: background-color 0.2s, padding-left 0.2s;
+    color: var(--text-dark) !important;
+    font-size: 0.8rem;
+    font-weight: 500;
 }
 
 .dropdown-item:hover {
     padding-left: 1.5rem;
     background-color: var(--light-blue);
+}
+
+.dropdown-menu {
+    min-width: 150px;
+    z-index: 1060;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Flash Messages Bottom Positioning */
+.flash-messages-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2000;
+    max-width: 400px;
+    width: calc(100% - 40px);
+}
+
+.flash-messages-container .alert {
+    margin-bottom: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
 }

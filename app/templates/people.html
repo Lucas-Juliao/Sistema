@@ -210,7 +210,7 @@
         tbody.innerHTML = '';
 
         if (filteredData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
             document.getElementById('pagination').innerHTML = '';
             return;
         }
@@ -227,9 +227,9 @@
                             <button class="btn btn-link text-muted p-0 border-0 gear-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-cog"></i>
                             </button>
-                            <ul class="dropdown-menu shadow border-0">
-                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}', '${person.birth_date}', ${person.has_guardian}, '${person.guardian_name}', '${person.guardian_phone}')"><i class="fas fa-edit me-2 text-primary"></i> EDITAR</a></li>
-                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewPerson('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}', '${person.birth_date}', ${person.has_guardian}, '${person.guardian_name}', '${person.guardian_phone}')"><i class="fas fa-eye me-2 text-info"></i> VISUALIZAR</a></li>
+                            <ul class="dropdown-menu shadow border">
+                                <li><button class="dropdown-item" type="button" onclick="openEditModal('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}', '${person.birth_date}', ${person.has_guardian}, '${person.guardian_name}', '${person.guardian_phone}')"><i class="fas fa-edit me-2 text-primary"></i> EDITAR</button></li>
+                                <li><button class="dropdown-item" type="button" onclick="viewPerson('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}', '${person.birth_date}', ${person.has_guardian}, '${person.guardian_name}', '${person.guardian_phone}')"><i class="fas fa-eye me-2 text-info"></i> VISUALIZAR</button></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="/people/delete/${person.id}" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="fas fa-trash me-2"></i> EXCLUIR</a></li>
                             </ul>
