@@ -28,7 +28,8 @@
             <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4" style="width: 10%;">ID</th>
+                        <th class="ps-4" style="width: 5%;"></th>
+                        <th style="width: 10%;">ID</th>
                         <th style="width: 35%;">Nome</th>
                         <th style="width: 15%;">Tipo</th>
                         <th style="width: 25%;">E-mail</th>
@@ -50,57 +51,60 @@
 <div id="addModal" class="modal-custom">
     <div class="modal-content-custom">
         <div class="modal-header-custom">
-            <h5>Nova Pessoa</h5>
+            <h5>NOVA PESSOA</h5>
             <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
         </div>
-        <form action="{{ url_for('main.add_person') }}" method="POST">
-            <div class="row">
-                <div class="col-md-8 mb-3">
-                    <label class="form-label">Nome</label>
-                    <input type="text" name="name" class="form-control" required>
+        <div class="modal-body-custom">
+            <form action="{{ url_for('main.add_person') }}" method="POST">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label mb-1">NOME</label>
+                        <input type="text" name="name" class="form-control uppercase-input" required style="height: 40px;">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label mb-1">DATA DE NASCIMENTO</label>
+                        <input type="date" name="birth_date" class="form-control" style="height: 40px;">
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Data de Nascimento</label>
-                    <input type="date" name="birth_date" class="form-control">
+                <div class="mb-3">
+                    <label class="form-label">TIPO</label>
+                    <select name="type" class="form-select" onchange="toggleGuardianSection(this, 'addGuardianSection')" required>
+                        <option value="">SELECIONE...</option>
+                        <option value="student">ALUNO</option>
+                        <option value="teacher">PROFESSOR</option>
+                    </select>
                 </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Tipo</label>
-                <select name="type" class="form-select" onchange="toggleGuardianSection(this, 'addGuardianSection')" required>
-                    <option value="student">Aluno</option>
-                    <option value="teacher">Professor</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">E-mail</label>
-                <input type="email" name="email" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Telefone</label>
-                <input type="text" name="phone" class="form-control phone-mask" placeholder="(00) 00000-0000">
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">E-MAIL</label>
+                    <input type="email" name="email" class="form-control uppercase-input">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">TELEFONE</label>
+                    <input type="text" name="phone" class="form-control phone-mask" placeholder="(00) 00000-0000">
+                </div>
 
-            <div id="addGuardianSection">
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" name="has_guardian" id="addHasGuardian" onchange="toggleGuardianFields(this, 'addGuardianFields')">
-                    <label class="form-check-label" for="addHasGuardian">Possui Responsável?</label>
-                </div>
-                <div id="addGuardianFields" style="display: none;" class="p-3 bg-light border rounded mb-3">
-                    <div class="mb-3">
-                        <label class="form-label">Nome do Responsável</label>
-                        <input type="text" name="guardian_name" class="form-control">
+                <div id="addGuardianSection" style="display: none;">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="has_guardian" id="addHasGuardian" onchange="toggleGuardianFields(this, 'addGuardianFields')">
+                        <label class="form-check-label" for="addHasGuardian">POSSUI RESPONSÁVEL?</label>
                     </div>
-                    <div class="mb-0">
-                        <label class="form-label">Telefone do Responsável</label>
-                        <input type="text" name="guardian_phone" class="form-control phone-mask" placeholder="(00) 00000-0000">
+                    <div id="addGuardianFields" style="display: none;" class="p-3 bg-light border rounded mb-3">
+                        <div class="mb-3">
+                            <label class="form-label">NOME DO RESPONSÁVEL</label>
+                            <input type="text" name="guardian_name" class="form-control uppercase-input">
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label">TELEFONE DO RESPONSÁVEL</label>
+                            <input type="text" name="guardian_phone" class="form-control phone-mask" placeholder="(00) 00000-0000">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="text-end mt-4">
-                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Salvar</button>
-            </div>
-        </form>
+                <div class="text-end mt-4 mb-2">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">SALVAR</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -108,57 +112,59 @@
 <div id="editModal" class="modal-custom">
     <div class="modal-content-custom">
         <div class="modal-header-custom">
-            <h5>Editar Pessoa</h5>
+            <h5>EDITAR PESSOA</h5>
             <span class="close-custom" onclick="closeModal('editModal')">&times;</span>
         </div>
-        <form id="editForm" method="POST">
-            <div class="row">
-                <div class="col-md-8 mb-3">
-                    <label class="form-label">Nome</label>
-                    <input type="text" name="name" id="editName" class="form-control" required>
+        <div class="modal-body-custom">
+            <form id="editForm" method="POST">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label mb-1">NOME</label>
+                        <input type="text" name="name" id="editName" class="form-control uppercase-input" required style="height: 40px;">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label mb-1">DATA DE NASCIMENTO</label>
+                        <input type="date" name="birth_date" id="editBirthDate" class="form-control" style="height: 40px;">
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label class="form-label">Data de Nascimento</label>
-                    <input type="date" name="birth_date" id="editBirthDate" class="form-control">
+                <div class="mb-3">
+                    <label class="form-label">TIPO</label>
+                    <select name="type" id="editType" class="form-select" onchange="toggleGuardianSection(this, 'editGuardianSection')" required>
+                        <option value="student">ALUNO</option>
+                        <option value="teacher">PROFESSOR</option>
+                    </select>
                 </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Tipo</label>
-                <select name="type" id="editType" class="form-select" onchange="toggleGuardianSection(this, 'editGuardianSection')" required>
-                    <option value="student">Aluno</option>
-                    <option value="teacher">Professor</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">E-mail</label>
-                <input type="email" name="email" id="editEmail" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Telefone</label>
-                <input type="text" name="phone" id="editPhone" class="form-control phone-mask" placeholder="(00) 00000-0000">
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">E-MAIL</label>
+                    <input type="email" name="email" id="editEmail" class="form-control uppercase-input">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">TELEFONE</label>
+                    <input type="text" name="phone" id="editPhone" class="form-control phone-mask" placeholder="(00) 00000-0000">
+                </div>
 
-            <div id="editGuardianSection">
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" name="has_guardian" id="editHasGuardian" onchange="toggleGuardianFields(this, 'editGuardianFields')">
-                    <label class="form-check-label" for="editHasGuardian">Possui Responsável?</label>
-                </div>
-                <div id="editGuardianFields" style="display: none;" class="p-3 bg-light border rounded mb-3">
-                    <div class="mb-3">
-                        <label class="form-label">Nome do Responsável</label>
-                        <input type="text" name="guardian_name" id="editGuardianName" class="form-control">
+                <div id="editGuardianSection" style="display: none;">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="has_guardian" id="editHasGuardian" onchange="toggleGuardianFields(this, 'editGuardianFields')">
+                        <label class="form-check-label" for="editHasGuardian">POSSUI RESPONSÁVEL?</label>
                     </div>
-                    <div class="mb-0">
-                        <label class="form-label">Telefone do Responsável</label>
-                        <input type="text" name="guardian_phone" id="editGuardianPhone" class="form-control phone-mask" placeholder="(00) 00000-0000">
+                    <div id="editGuardianFields" style="display: none;" class="p-3 bg-light border rounded mb-3">
+                        <div class="mb-3">
+                            <label class="form-label">NOME DO RESPONSÁVEL</label>
+                            <input type="text" name="guardian_name" id="editGuardianName" class="form-control uppercase-input">
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label">TELEFONE DO RESPONSÁVEL</label>
+                            <input type="text" name="guardian_phone" id="editGuardianPhone" class="form-control phone-mask" placeholder="(00) 00000-0000">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="text-end mt-4">
-                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('editModal')">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Atualizar</button>
-            </div>
-        </form>
+                <div class="text-end mt-4 mb-2">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeModal('editModal')">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">ATUALIZAR</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -213,35 +219,37 @@
         const end = start + itemsPerPage;
         const pageData = filteredData.slice(start, end);
 
-        pageData.forEach(person => {
+        pageData.forEach((person, index) => {
             const row = `
-                <tr>
-                    <td class="ps-4 align-middle text-muted">#${person.id}</td>
+                <tr class="fade-in" style="animation-delay: ${index * 0.05}s">
+                    <td class="ps-4 align-middle">
+                        <div class="dropdown">
+                            <button class="btn btn-link text-muted p-0 border-0 gear-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <ul class="dropdown-menu shadow border-0">
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}', '${person.birth_date}', ${person.has_guardian}, '${person.guardian_name}', '${person.guardian_phone}')"><i class="fas fa-edit me-2 text-primary"></i> EDITAR</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewPerson('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}', '${person.birth_date}', ${person.has_guardian}, '${person.guardian_name}', '${person.guardian_phone}')"><i class="fas fa-eye me-2 text-info"></i> VISUALIZAR</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/people/delete/${person.id}" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="fas fa-trash me-2"></i> EXCLUIR</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td class="align-middle text-muted">${person.id}</td>
                     <td class="align-middle">
                         <div class="d-flex align-items-center">
-                            <div class="dropdown me-3">
-                                <button class="btn btn-link text-muted p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                                <ul class="dropdown-menu shadow border-0">
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}', '${person.birth_date}', ${person.has_guardian}, '${person.guardian_name}', '${person.guardian_phone}')"><i class="fas fa-edit me-2 text-primary"></i> Editar</a></li>
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewPerson('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}', '${person.birth_date}', ${person.has_guardian}, '${person.guardian_name}', '${person.guardian_phone}')"><i class="fas fa-eye me-2 text-info"></i> Visualizar</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="/people/delete/${person.id}" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="fas fa-trash me-2"></i> Excluir</a></li>
-                                </ul>
-                            </div>
                             <div class="rounded-circle bg-blue text-white d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px; flex-shrink: 0;">
                                 ${person.name[0].toUpperCase()}
                             </div>
-                            <span class="text-truncate" style="max-width: 200px;"><strong>${person.name}</strong></span>
+                            <span class="text-truncate" style="max-width: 200px;"><strong>${person.name.toUpperCase()}</strong></span>
                         </div>
                     </td>
                     <td class="align-middle">
                         <span class="badge ${person.badgeClass}" style="width: 80px;">
-                            ${person.typeDisplay}
+                            ${person.typeDisplay.toUpperCase()}
                         </span>
                     </td>
-                    <td class="align-middle text-muted">${person.email || '-'}</td>
+                    <td class="align-middle text-muted">${(person.email || '-').toUpperCase()}</td>
                     <td class="align-middle text-muted">${formatPhone(person.phone)}</td>
                 </tr>
             `;
@@ -271,21 +279,45 @@
     }
 
     document.getElementById('filterBtn').addEventListener('click', () => {
-        const term = document.getElementById('searchInput').value.toLowerCase();
-        filteredData = allData.filter(item =>
-            item.name.toLowerCase().includes(term) ||
-            item.email.toLowerCase().includes(term) ||
-            item.phone.toLowerCase().includes(term)
-        );
-        currentPage = 1;
-        renderTable();
+        const btn = document.getElementById('filterBtn');
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Filtrando...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            filteredData = allData.filter(item =>
+                item.name.toLowerCase().includes(term) ||
+                item.email.toLowerCase().includes(term) ||
+                item.phone.toLowerCase().includes(term)
+            );
+            currentPage = 1;
+            renderTable();
+
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }, 400);
     });
 
     // Inicializar tabela vazia
     document.addEventListener('DOMContentLoaded', () => {
         renderTable();
-        // Ensure guardian section matches initial "Aluno" selection in add modal
-        toggleGuardianSection(document.querySelector('select[name="type"]'), 'addGuardianSection');
+
+        // Uppercase enforcement on input
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('uppercase-input')) {
+                e.target.value = e.target.value.toUpperCase();
+            }
+        });
+
+        // Ensure all forms convert data to uppercase before submit
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                form.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(input => {
+                    input.value = input.value.toUpperCase();
+                });
+            });
+        });
     });
 
     function openModal(id) {

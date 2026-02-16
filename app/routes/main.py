@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, session
+from flask import Blueprint, render_template, redirect, url_for, session, flash
 from .auth import login_required
 from app.database import get_db
 from datetime import datetime
@@ -43,13 +43,13 @@ def people():
 @login_required
 def add_person():
     from flask import request
-    name = request.form.get('name')
+    name = (request.form.get('name') or '').upper()
     type = request.form.get('type')
-    email = request.form.get('email')
+    email = (request.form.get('email') or '').upper()
     phone = request.form.get('phone')
     birth_date = request.form.get('birth_date')
     has_guardian = 1 if request.form.get('has_guardian') else 0
-    guardian_name = request.form.get('guardian_name')
+    guardian_name = (request.form.get('guardian_name') or '').upper()
     guardian_phone = request.form.get('guardian_phone')
 
     if name and type:
@@ -60,6 +60,7 @@ def add_person():
         ''', (name, type, email, phone, birth_date, has_guardian, guardian_name, guardian_phone))
         db.commit()
         db.close()
+        flash('PESSOA CADASTRADA COM SUCESSO!', 'success')
 
     return redirect(url_for('main.people'))
 
@@ -67,13 +68,13 @@ def add_person():
 @login_required
 def edit_person(id):
     from flask import request
-    name = request.form.get('name')
+    name = (request.form.get('name') or '').upper()
     type = request.form.get('type')
-    email = request.form.get('email')
+    email = (request.form.get('email') or '').upper()
     phone = request.form.get('phone')
     birth_date = request.form.get('birth_date')
     has_guardian = 1 if request.form.get('has_guardian') else 0
-    guardian_name = request.form.get('guardian_name')
+    guardian_name = (request.form.get('guardian_name') or '').upper()
     guardian_phone = request.form.get('guardian_phone')
 
     if name and type:
@@ -85,6 +86,7 @@ def edit_person(id):
         ''', (name, type, email, phone, birth_date, has_guardian, guardian_name, guardian_phone, id))
         db.commit()
         db.close()
+        flash('CADASTRO ATUALIZADO COM SUCESSO!', 'success')
 
     return redirect(url_for('main.people'))
 
@@ -95,6 +97,7 @@ def delete_person(id):
     db.execute('DELETE FROM people WHERE id = ?', (id,))
     db.commit()
     db.close()
+    flash('CADASTRO EXCLUÍDO COM SUCESSO!', 'success')
     return redirect(url_for('main.people'))
 
 @main_bp.route('/courses')
@@ -115,7 +118,7 @@ def courses():
 @login_required
 def add_course():
     from flask import request
-    name = request.form.get('name')
+    name = (request.form.get('name') or '').upper()
     workload = request.form.get('workload')
     teacher_id = request.form.get('teacher_id')
 
@@ -125,6 +128,7 @@ def add_course():
                    (name, workload, teacher_id or None))
         db.commit()
         db.close()
+        flash('CURSO CADASTRADO COM SUCESSO!', 'success')
 
     return redirect(url_for('main.courses'))
 
@@ -132,7 +136,7 @@ def add_course():
 @login_required
 def edit_course(id):
     from flask import request
-    name = request.form.get('name')
+    name = (request.form.get('name') or '').upper()
     workload = request.form.get('workload')
     teacher_id = request.form.get('teacher_id')
 
@@ -142,6 +146,7 @@ def edit_course(id):
                    (name, workload, teacher_id or None, id))
         db.commit()
         db.close()
+        flash('CURSO ATUALIZADO COM SUCESSO!', 'success')
 
     return redirect(url_for('main.courses'))
 
@@ -152,6 +157,7 @@ def delete_course(id):
     db.execute('DELETE FROM courses WHERE id = ?', (id,))
     db.commit()
     db.close()
+    flash('CURSO EXCLUÍDO COM SUCESSO!', 'success')
     return redirect(url_for('main.courses'))
 
 @main_bp.route('/schedule')
@@ -184,8 +190,8 @@ def add_schedule():
     day_of_week = request.form.get('day_of_week')
     start_time = request.form.get('start_time')
     end_time = request.form.get('end_time')
-    course_name = request.form.get('course_name')
-    room = request.form.get('room')
+    course_name = (request.form.get('course_name') or '').upper()
+    room = (request.form.get('room') or '').upper()
 
     if teacher_id and day_of_week and start_time and end_time:
         db = get_db()
@@ -195,6 +201,7 @@ def add_schedule():
         ''', (teacher_id, day_of_week, start_time, end_time, course_name, room))
         db.commit()
         db.close()
+        flash('HORÁRIO ADICIONADO COM SUCESSO!', 'success')
 
     return redirect(url_for('main.schedule'))
 
@@ -206,8 +213,8 @@ def edit_schedule(id):
     day_of_week = request.form.get('day_of_week')
     start_time = request.form.get('start_time')
     end_time = request.form.get('end_time')
-    course_name = request.form.get('course_name')
-    room = request.form.get('room')
+    course_name = (request.form.get('course_name') or '').upper()
+    room = (request.form.get('room') or '').upper()
 
     if teacher_id and day_of_week and start_time and end_time:
         db = get_db()
@@ -218,6 +225,7 @@ def edit_schedule(id):
         ''', (teacher_id, day_of_week, start_time, end_time, course_name, room, id))
         db.commit()
         db.close()
+        flash('HORÁRIO ATUALIZADO COM SUCESSO!', 'success')
 
     return redirect(url_for('main.schedule'))
 
@@ -228,6 +236,7 @@ def delete_schedule(id):
     db.execute('DELETE FROM schedules WHERE id = ?', (id,))
     db.commit()
     db.close()
+    flash('HORÁRIO EXCLUÍDO COM SUCESSO!', 'success')
     return redirect(url_for('main.schedule'))
 
 @main_bp.route('/attendance')
@@ -272,6 +281,7 @@ def add_attendance():
         ''', (schedule_id, student_id, date, status))
         db.commit()
         db.close()
+        flash('ASSINATURA REGISTRADA COM SUCESSO!', 'success')
 
     return redirect(url_for('main.attendance'))
 
@@ -282,6 +292,7 @@ def delete_attendance(id):
     db.execute('DELETE FROM attendance WHERE id = ?', (id,))
     db.commit()
     db.close()
+    flash('ASSINATURA EXCLUÍDA COM SUCESSO!', 'success')
     return redirect(url_for('main.attendance'))
 
 @main_bp.route('/finance')
@@ -306,11 +317,11 @@ def finance():
 @login_required
 def add_transaction():
     from flask import request
-    description = request.form.get('description')
+    description = (request.form.get('description') or '').upper()
     amount = request.form.get('amount')
     type = request.form.get('type')
     date = request.form.get('date')
-    status = request.form.get('status')
+    status = (request.form.get('status') or '').upper()
 
     if description and amount and type and date:
         db = get_db()
@@ -320,6 +331,7 @@ def add_transaction():
         ''', (description, amount, type, date, status))
         db.commit()
         db.close()
+        flash('LANÇAMENTO FINANCEIRO REALIZADO COM SUCESSO!', 'success')
 
     return redirect(url_for('main.finance'))
 
@@ -330,4 +342,5 @@ def delete_transaction(id):
     db.execute('DELETE FROM finance WHERE id = ?', (id,))
     db.commit()
     db.close()
+    flash('LANÇAMENTO FINANCEIRO EXCLUÍDO COM SUCESSO!', 'success')
     return redirect(url_for('main.finance'))

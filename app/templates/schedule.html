@@ -28,7 +28,9 @@
             <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4" style="width: 30%;">Dia da Semana</th>
+                        <th class="ps-4" style="width: 5%;"></th>
+                        <th style="width: 10%;">ID</th>
+                        <th style="width: 25%;">Dia da Semana</th>
                         <th style="width: 20%;">Professor</th>
                         <th style="width: 20%;">Horário</th>
                         <th style="width: 15%;">Curso</th>
@@ -48,56 +50,58 @@
 <div id="addModal" class="modal-custom">
     <div class="modal-content-custom">
         <div class="modal-header-custom">
-            <h5>Novo Horário na Agenda</h5>
+            <h5>NOVO HORÁRIO NA AGENDA</h5>
             <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
         </div>
-        <form action="{{ url_for('main.add_schedule') }}" method="POST">
-            <div class="mb-3">
-                <label class="form-label">Professor</label>
-                <select name="teacher_id" class="form-select" required>
-                    <option value="">Selecione um professor...</option>
-                    {% for teacher in teachers %}
-                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Dia da Semana</label>
-                <select name="day_of_week" class="form-select" required>
-                    <option value="segunda-feira">Segunda-feira</option>
-                    <option value="terça-feira">Terça-feira</option>
-                    <option value="quarta-feira">Quarta-feira</option>
-                    <option value="quinta-feira">Quinta-feira</option>
-                    <option value="sexta-feira">Sexta-feira</option>
-                    <option value="sábado">Sábado</option>
-                    <option value="domingo">Domingo</option>
-                </select>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label">Hora Início</label>
-                    <input type="time" name="start_time" class="form-control" required>
+        <div class="modal-body-custom">
+            <form action="{{ url_for('main.add_schedule') }}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label">PROFESSOR</label>
+                    <select name="teacher_id" class="form-select uppercase-input" required>
+                        <option value="">SELECIONE UM PROFESSOR...</option>
+                        {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="col">
-                    <label class="form-label">Hora Fim</label>
-                    <input type="time" name="end_time" class="form-control" required>
+                <div class="mb-3">
+                    <label class="form-label">DIA DA SEMANA</label>
+                    <select name="day_of_week" class="form-select uppercase-input" required>
+                        <option value="segunda-feira">SEGUNDA-FEIRA</option>
+                        <option value="terça-feira">TERÇA-FEIRA</option>
+                        <option value="quarta-feira">QUARTA-FEIRA</option>
+                        <option value="quinta-feira">QUINTA-FEIRA</option>
+                        <option value="sexta-feira">SEXTA-FEIRA</option>
+                        <option value="sábado">SÁBADO</option>
+                        <option value="domingo">DOMINGO</option>
+                    </select>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label">Nome do Curso (Opcional)</label>
-                    <input type="text" name="course_name" class="form-control" placeholder="Ex: Piano I">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">HORA INÍCIO</label>
+                        <input type="time" name="start_time" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">HORA FIM</label>
+                        <input type="time" name="end_time" class="form-control" required>
+                    </div>
                 </div>
-                <div class="col">
-                    <label class="form-label">Sala</label>
-                    <input type="text" name="room" class="form-control" placeholder="Ex: Sala 01">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">NOME DO CURSO (OPCIONAL)</label>
+                        <input type="text" name="course_name" class="form-control uppercase-input" placeholder="EX: PIANO I">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">SALA</label>
+                        <input type="text" name="room" class="form-control uppercase-input" placeholder="EX: SALA 01">
+                    </div>
                 </div>
-            </div>
-            <div class="text-end mt-4">
-                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Salvar</button>
-            </div>
-        </form>
+                <div class="text-end mt-4 mb-2">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">SALVAR</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -105,55 +109,57 @@
 <div id="editModal" class="modal-custom">
     <div class="modal-content-custom">
         <div class="modal-header-custom">
-            <h5>Editar Horário</h5>
+            <h5>EDITAR HORÁRIO</h5>
             <span class="close-custom" onclick="closeModal('editModal')">&times;</span>
         </div>
-        <form id="editForm" method="POST">
-            <div class="mb-3">
-                <label class="form-label">Professor</label>
-                <select name="teacher_id" id="editTeacherId" class="form-select" required>
-                    {% for teacher in teachers %}
-                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Dia da Semana</label>
-                <select name="day_of_week" id="editDayOfWeek" class="form-select" required>
-                    <option value="segunda-feira">Segunda-feira</option>
-                    <option value="terça-feira">Terça-feira</option>
-                    <option value="quarta-feira">Quarta-feira</option>
-                    <option value="quinta-feira">Quinta-feira</option>
-                    <option value="sexta-feira">Sexta-feira</option>
-                    <option value="sábado">Sábado</option>
-                    <option value="domingo">Domingo</option>
-                </select>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label">Hora Início</label>
-                    <input type="time" name="start_time" id="editStartTime" class="form-control" required>
+        <div class="modal-body-custom">
+            <form id="editForm" method="POST">
+                <div class="mb-3">
+                    <label class="form-label">PROFESSOR</label>
+                    <select name="teacher_id" id="editTeacherId" class="form-select uppercase-input" required>
+                        {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="col">
-                    <label class="form-label">Hora Fim</label>
-                    <input type="time" name="end_time" id="editEndTime" class="form-control" required>
+                <div class="mb-3">
+                    <label class="form-label">DIA DA SEMANA</label>
+                    <select name="day_of_week" id="editDayOfWeek" class="form-select uppercase-input" required>
+                        <option value="segunda-feira">SEGUNDA-FEIRA</option>
+                        <option value="terça-feira">TERÇA-FEIRA</option>
+                        <option value="quarta-feira">QUARTA-FEIRA</option>
+                        <option value="quinta-feira">QUINTA-FEIRA</option>
+                        <option value="sexta-feira">SEXTA-FEIRA</option>
+                        <option value="sábado">SÁBADO</option>
+                        <option value="domingo">DOMINGO</option>
+                    </select>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label">Nome do Curso</label>
-                    <input type="text" name="course_name" id="editCourseName" class="form-control">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">HORA INÍCIO</label>
+                        <input type="time" name="start_time" id="editStartTime" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">HORA FIM</label>
+                        <input type="time" name="end_time" id="editEndTime" class="form-control" required>
+                    </div>
                 </div>
-                <div class="col">
-                    <label class="form-label">Sala</label>
-                    <input type="text" name="room" id="editRoom" class="form-control">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">NOME DO CURSO</label>
+                        <input type="text" name="course_name" id="editCourseName" class="form-control uppercase-input">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">SALA</label>
+                        <input type="text" name="room" id="editRoom" class="form-control uppercase-input">
+                    </div>
                 </div>
-            </div>
-            <div class="text-end mt-4">
-                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('editModal')">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Atualizar</button>
-            </div>
-        </form>
+                <div class="text-end mt-4 mb-2">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeModal('editModal')">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">ATUALIZAR</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -191,27 +197,28 @@
         const end = start + itemsPerPage;
         const pageData = filteredData.slice(start, end);
 
-        pageData.forEach(item => {
+        pageData.forEach((item, index) => {
             const row = `
-                <tr>
+                <tr class="fade-in" style="animation-delay: ${index * 0.05}s">
                     <td class="ps-4 align-middle">
-                        <div class="d-flex align-items-center">
-                            <div class="dropdown me-3">
-                                <button class="btn btn-link text-muted p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                                <ul class="dropdown-menu shadow border-0">
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${item.id}', '${item.teacher_id}', '${item.day_of_week}', '${item.start_time}', '${item.end_time}', '${item.course_name}', '${item.room}')"><i class="fas fa-edit me-2 text-primary"></i> Editar</a></li>
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewSchedule('${item.id}', '${item.teacher_id}', '${item.day_of_week}', '${item.start_time}', '${item.end_time}', '${item.course_name}', '${item.room}')"><i class="fas fa-eye me-2 text-info"></i> Visualizar</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="/schedule/delete/${item.id}" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="fas fa-trash me-2"></i> Excluir</a></li>
-                                </ul>
-                            </div>
-                            <span class="text-capitalize fw-bold">${item.day_of_week}</span>
+                        <div class="dropdown">
+                            <button class="btn btn-link text-muted p-0 border-0 gear-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <ul class="dropdown-menu shadow border-0">
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${item.id}', '${item.teacher_id}', '${item.day_of_week}', '${item.start_time}', '${item.end_time}', '${item.course_name}', '${item.room}')"><i class="fas fa-edit me-2 text-primary"></i> EDITAR</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewSchedule('${item.id}', '${item.teacher_id}', '${item.day_of_week}', '${item.start_time}', '${item.end_time}', '${item.course_name}', '${item.room}')"><i class="fas fa-eye me-2 text-info"></i> VISUALIZAR</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/schedule/delete/${item.id}" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="fas fa-trash me-2"></i> EXCLUIR</a></li>
+                            </ul>
                         </div>
                     </td>
+                    <td class="align-middle text-muted">${item.id}</td>
                     <td class="align-middle">
-                        <i class="fas fa-user-tie me-1 text-muted"></i> ${item.teacher_name}
+                        <span class="text-uppercase fw-bold">${item.day_of_week}</span>
+                    </td>
+                    <td class="align-middle">
+                        <i class="fas fa-user-tie me-1 text-muted"></i> ${item.teacher_name.toUpperCase()}
                     </td>
                     <td class="align-middle">
                         <span class="badge bg-light text-dark border">
@@ -219,10 +226,10 @@
                         </span>
                     </td>
                     <td class="align-middle text-muted italic">
-                        ${item.course_name || '-'}
+                        ${(item.course_name || '-').toUpperCase()}
                     </td>
                     <td class="align-middle text-muted">
-                        <i class="fas fa-door-open me-1"></i> ${item.room || '-'}
+                        <i class="fas fa-door-open me-1"></i> ${(item.room || '-').toUpperCase()}
                     </td>
                 </tr>
             `;
@@ -252,18 +259,44 @@
     }
 
     document.getElementById('filterBtn').addEventListener('click', () => {
-        const term = document.getElementById('searchInput').value.toLowerCase();
-        filteredData = allData.filter(item =>
-            item.teacher_name.toLowerCase().includes(term) ||
-            item.day_of_week.toLowerCase().includes(term) ||
-            item.course_name.toLowerCase().includes(term)
-        );
-        currentPage = 1;
-        renderTable();
+        const btn = document.getElementById('filterBtn');
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Filtrando...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            filteredData = allData.filter(item =>
+                item.teacher_name.toLowerCase().includes(term) ||
+                item.day_of_week.toLowerCase().includes(term) ||
+                item.course_name.toLowerCase().includes(term)
+            );
+            currentPage = 1;
+            renderTable();
+
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }, 400);
     });
 
     document.addEventListener('DOMContentLoaded', () => {
         renderTable();
+
+        // Uppercase enforcement on input
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('uppercase-input')) {
+                e.target.value = e.target.value.toUpperCase();
+            }
+        });
+
+        // Ensure all forms convert data to uppercase before submit
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                form.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(input => {
+                    input.value = input.value.toUpperCase();
+                });
+            });
+        });
     });
 
     function openModal(id) {

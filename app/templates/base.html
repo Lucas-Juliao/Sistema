@@ -49,7 +49,20 @@
 
     <div class="main-content">
         <main>
-            {% block content %}{% endblock %}
+            <div class="container-fluid">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ 'success' if category == 'success' else 'danger' if category == 'error' else 'info' }} alert-dismissible fade show shadow-sm border-0" role="alert">
+                        <i class="fas {{ 'fa-check-circle' if category == 'success' else 'fa-exclamation-circle' if category == 'error' else 'fa-info-circle' }} me-2"></i>
+                        {{ message | upper }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </div>
         </main>
     </div>
 

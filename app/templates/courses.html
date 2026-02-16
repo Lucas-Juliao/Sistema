@@ -28,8 +28,10 @@
             <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4" style="width: 50%;">Nome do Curso</th>
-                        <th style="width: 20%;">Carga Horária</th>
+                        <th class="ps-4" style="width: 5%;"></th>
+                        <th style="width: 10%;">ID</th>
+                        <th style="width: 40%;">Nome do Curso</th>
+                        <th style="width: 15%;">Carga Horária</th>
                         <th style="width: 30%;">Professor Responsável</th>
                     </tr>
                 </thead>
@@ -46,32 +48,34 @@
 <div id="addModal" class="modal-custom">
     <div class="modal-content-custom">
         <div class="modal-header-custom">
-            <h5>Novo Curso</h5>
+            <h5>NOVO CURSO</h5>
             <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
         </div>
-        <form action="{{ url_for('main.add_course') }}" method="POST">
-            <div class="mb-3">
-                <label class="form-label">Nome do Curso</label>
-                <input type="text" name="name" class="form-control" required placeholder="Ex: Piano Clássico">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Carga Horária (horas)</label>
-                <input type="number" name="workload" class="form-control" placeholder="Ex: 40">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Professor</label>
-                <select name="teacher_id" class="form-select">
-                    <option value="">Selecione um professor...</option>
-                    {% for teacher in teachers %}
-                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="text-end mt-4">
-                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Salvar</button>
-            </div>
-        </form>
+        <div class="modal-body-custom">
+            <form action="{{ url_for('main.add_course') }}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label">NOME DO CURSO</label>
+                    <input type="text" name="name" class="form-control uppercase-input" required placeholder="EX: PIANO CLÁSSICO">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">CARGA HORÁRIA (HORAS)</label>
+                    <input type="number" name="workload" class="form-control" placeholder="EX: 40">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">PROFESSOR</label>
+                    <select name="teacher_id" class="form-select uppercase-input">
+                        <option value="">SELECIONE UM PROFESSOR...</option>
+                        {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="text-end mt-4 mb-2">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">SALVAR</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -79,32 +83,34 @@
 <div id="editModal" class="modal-custom">
     <div class="modal-content-custom">
         <div class="modal-header-custom">
-            <h5>Editar Curso</h5>
+            <h5>EDITAR CURSO</h5>
             <span class="close-custom" onclick="closeModal('editModal')">&times;</span>
         </div>
-        <form id="editForm" method="POST">
-            <div class="mb-3">
-                <label class="form-label">Nome do Curso</label>
-                <input type="text" name="name" id="editName" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Carga Horária (horas)</label>
-                <input type="number" name="workload" id="editWorkload" class="form-control">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Professor</label>
-                <select name="teacher_id" id="editTeacherId" class="form-select">
-                    <option value="">Selecione um professor...</option>
-                    {% for teacher in teachers %}
-                    <option value="{{ teacher.id }}">{{ teacher.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="text-end mt-4">
-                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('editModal')">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Atualizar</button>
-            </div>
-        </form>
+        <div class="modal-body-custom">
+            <form id="editForm" method="POST">
+                <div class="mb-3">
+                    <label class="form-label">NOME DO CURSO</label>
+                    <input type="text" name="name" id="editName" class="form-control uppercase-input" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">CARGA HORÁRIA (HORAS)</label>
+                    <input type="number" name="workload" id="editWorkload" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">PROFESSOR</label>
+                    <select name="teacher_id" id="editTeacherId" class="form-select uppercase-input">
+                        <option value="">SELECIONE UM PROFESSOR...</option>
+                        {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">{{ teacher.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="text-end mt-4 mb-2">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeModal('editModal')">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">ATUALIZAR</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -139,34 +145,35 @@
         const end = start + itemsPerPage;
         const pageData = filteredData.slice(start, end);
 
-        pageData.forEach(course => {
+        pageData.forEach((course, index) => {
             const row = `
-                <tr>
+                <tr class="fade-in" style="animation-delay: ${index * 0.05}s">
                     <td class="ps-4 align-middle">
-                        <div class="d-flex align-items-center">
-                            <div class="dropdown me-3">
-                                <button class="btn btn-link text-muted p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                                <ul class="dropdown-menu shadow border-0">
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${course.id}', '${course.name}', '${course.workload}', '${course.teacher_id}')"><i class="fas fa-edit me-2 text-primary"></i> Editar</a></li>
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewCourse('${course.id}', '${course.name}', '${course.workload}', '${course.teacher_id}')"><i class="fas fa-eye me-2 text-info"></i> Visualizar</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="/courses/delete/${course.id}" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="fas fa-trash me-2"></i> Excluir</a></li>
-                                </ul>
-                            </div>
-                            <strong>${course.name}</strong>
+                        <div class="dropdown">
+                            <button class="btn btn-link text-muted p-0 border-0 gear-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <ul class="dropdown-menu shadow border-0">
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${course.id}', '${course.name}', '${course.workload}', '${course.teacher_id}')"><i class="fas fa-edit me-2 text-primary"></i> EDITAR</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewCourse('${course.id}', '${course.name}', '${course.workload}', '${course.teacher_id}')"><i class="fas fa-eye me-2 text-info"></i> VISUALIZAR</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/courses/delete/${course.id}" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="fas fa-trash me-2"></i> EXCLUIR</a></li>
+                            </ul>
                         </div>
+                    </td>
+                    <td class="align-middle text-muted">${course.id}</td>
+                    <td class="align-middle">
+                        <strong>${course.name.toUpperCase()}</strong>
                     </td>
                     <td class="align-middle">
                         <span class="badge bg-light text-dark border">
-                            ${course.workload} horas
+                            ${course.workload} HORAS
                         </span>
                     </td>
                     <td class="align-middle text-muted">
                         ${course.teacher_name ?
-                            `<i class="fas fa-chalkboard-teacher me-1"></i> ${course.teacher_name}` :
-                            `<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i> Sem professor</span>`}
+                            `<i class="fas fa-chalkboard-teacher me-1"></i> ${course.teacher_name.toUpperCase()}` :
+                            `<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i> SEM PROFESSOR</span>`}
                     </td>
                 </tr>
             `;
@@ -196,17 +203,43 @@
     }
 
     document.getElementById('filterBtn').addEventListener('click', () => {
-        const term = document.getElementById('searchInput').value.toLowerCase();
-        filteredData = allData.filter(item =>
-            item.name.toLowerCase().includes(term) ||
-            item.teacher_name.toLowerCase().includes(term)
-        );
-        currentPage = 1;
-        renderTable();
+        const btn = document.getElementById('filterBtn');
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Filtrando...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            filteredData = allData.filter(item =>
+                item.name.toLowerCase().includes(term) ||
+                item.teacher_name.toLowerCase().includes(term)
+            );
+            currentPage = 1;
+            renderTable();
+
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }, 400);
     });
 
     document.addEventListener('DOMContentLoaded', () => {
         renderTable();
+
+        // Uppercase enforcement on input
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('uppercase-input')) {
+                e.target.value = e.target.value.toUpperCase();
+            }
+        });
+
+        // Ensure all forms convert data to uppercase before submit
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                form.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(input => {
+                    input.value = input.value.toUpperCase();
+                });
+            });
+        });
     });
 
     function openModal(id) {

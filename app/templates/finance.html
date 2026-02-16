@@ -56,7 +56,9 @@
             <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4" style="width: 20%;">Data</th>
+                        <th class="ps-4" style="width: 5%;"></th>
+                        <th style="width: 10%;">ID</th>
+                        <th style="width: 15%;">Data</th>
                         <th>Descrição</th>
                         <th>Tipo</th>
                         <th>Valor</th>
@@ -76,45 +78,47 @@
 <div id="addModal" class="modal-custom">
     <div class="modal-content-custom">
         <div class="modal-header-custom">
-            <h5>Nova Transação</h5>
+            <h5>NOVA TRANSAÇÃO</h5>
             <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
         </div>
-        <form action="{{ url_for('main.add_transaction') }}" method="POST">
-            <div class="mb-3">
-                <label class="form-label">Descrição</label>
-                <input type="text" name="description" class="form-control" required placeholder="Ex: Mensalidade Aluno X">
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label">Valor (R$)</label>
-                    <input type="number" step="0.01" name="amount" class="form-control" required placeholder="0,00">
+        <div class="modal-body-custom">
+            <form action="{{ url_for('main.add_transaction') }}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label">DESCRIÇÃO</label>
+                    <input type="text" name="description" class="form-control uppercase-input" required placeholder="EX: MENSALIDADE ALUNO X">
                 </div>
-                <div class="col">
-                    <label class="form-label">Data</label>
-                    <input type="date" name="date" class="form-control" required>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">VALOR (R$)</label>
+                        <input type="number" step="0.01" name="amount" class="form-control" required placeholder="0,00">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">DATA</label>
+                        <input type="date" name="date" class="form-control" required>
+                    </div>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <label class="form-label">Tipo</label>
-                    <select name="type" class="form-select" required>
-                        <option value="receita">Receita (Entrada)</option>
-                        <option value="despesa">Despesa (Saída)</option>
-                    </select>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">TIPO</label>
+                        <select name="type" class="form-select uppercase-input" required>
+                            <option value="receita">RECEITA (ENTRADA)</option>
+                            <option value="despesa">DESPESA (SAÍDA)</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">STATUS</label>
+                        <select name="status" class="form-select uppercase-input" required>
+                            <option value="pago">CONFIRMADO / PAGO</option>
+                            <option value="pendente">PENDENTE</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-select" required>
-                        <option value="pago">Confirmado / Pago</option>
-                        <option value="pendente">Pendente</option>
-                    </select>
+                <div class="text-end mt-4 mb-2">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">REGISTRAR</button>
                 </div>
-            </div>
-            <div class="text-end mt-4">
-                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Registrar</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -153,30 +157,29 @@
         const end = start + itemsPerPage;
         const pageData = filteredData.slice(start, end);
 
-        pageData.forEach(item => {
+        pageData.forEach((item, index) => {
             const amountFormatted = item.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const row = `
-                <tr>
+                <tr class="fade-in" style="animation-delay: ${index * 0.05}s">
                     <td class="ps-4 align-middle">
-                        <div class="d-flex align-items-center">
-                            <div class="dropdown me-3">
-                                <button class="btn btn-link text-muted p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                                <ul class="dropdown-menu shadow border-0">
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="alert('Funcionalidade de edição em desenvolvimento.')"><i class="fas fa-edit me-2 text-primary"></i> Editar</a></li>
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="alert('Descrição: ${item.description}\\nValor: R$ ${amountFormatted}\\nData: ${item.date}')"><i class="fas fa-eye me-2 text-info"></i> Visualizar</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="/finance/delete/${item.id}" onclick="return confirm('Excluir transação?')"><i class="fas fa-trash me-2"></i> Excluir</a></li>
-                                </ul>
-                            </div>
-                            ${item.date}
+                        <div class="dropdown">
+                            <button class="btn btn-link text-muted p-0 border-0 gear-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <ul class="dropdown-menu shadow border-0">
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="alert('Funcionalidade de edição em desenvolvimento.')"><i class="fas fa-edit me-2 text-primary"></i> EDITAR</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="alert('DESCRIÇÃO: ${item.description.toUpperCase()}\\nVALOR: R$ ${amountFormatted}\\nDATA: ${item.date}')"><i class="fas fa-eye me-2 text-info"></i> VISUALIZAR</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/finance/delete/${item.id}" onclick="return confirm('Excluir transação?')"><i class="fas fa-trash me-2"></i> EXCLUIR</a></li>
+                            </ul>
                         </div>
                     </td>
-                    <td class="align-middle"><strong>${item.description}</strong></td>
+                    <td class="align-middle text-muted">${item.id}</td>
+                    <td class="align-middle">${item.date}</td>
+                    <td class="align-middle"><strong>${item.description.toUpperCase()}</strong></td>
                     <td class="align-middle">
                         <span class="badge ${item.badgeClass}">
-                            ${item.typeDisplay}
+                            ${item.typeDisplay.toUpperCase()}
                         </span>
                     </td>
                     <td class="align-middle ${item.type === 'receita' ? 'text-success' : 'text-danger'} fw-bold">
@@ -184,7 +187,7 @@
                     </td>
                     <td class="align-middle">
                         <span class="badge bg-light text-dark border">
-                            ${item.statusDisplay}
+                            ${item.statusDisplay.toUpperCase()}
                         </span>
                     </td>
                 </tr>
@@ -215,17 +218,43 @@
     }
 
     document.getElementById('filterBtn').addEventListener('click', () => {
-        const term = document.getElementById('searchInput').value.toLowerCase();
-        filteredData = allData.filter(item =>
-            item.description.toLowerCase().includes(term) ||
-            item.date.includes(term)
-        );
-        currentPage = 1;
-        renderTable();
+        const btn = document.getElementById('filterBtn');
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Filtrando...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            filteredData = allData.filter(item =>
+                item.description.toLowerCase().includes(term) ||
+                item.date.includes(term)
+            );
+            currentPage = 1;
+            renderTable();
+
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }, 400);
     });
 
     document.addEventListener('DOMContentLoaded', () => {
         renderTable();
+
+        // Uppercase enforcement on input
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('uppercase-input')) {
+                e.target.value = e.target.value.toUpperCase();
+            }
+        });
+
+        // Ensure all forms convert data to uppercase before submit
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                form.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(input => {
+                    input.value = input.value.toUpperCase();
+                });
+            });
+        });
     });
 
     function openModal(id) {

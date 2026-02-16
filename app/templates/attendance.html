@@ -28,7 +28,9 @@
             <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4" style="width: 20%;">Data</th>
+                        <th class="ps-4" style="width: 5%;"></th>
+                        <th style="width: 10%;">ID</th>
+                        <th style="width: 15%;">Data</th>
                         <th>Aluno</th>
                         <th>Curso / Aula</th>
                         <th>Professor</th>
@@ -48,50 +50,52 @@
 <div id="addModal" class="modal-custom">
     <div class="modal-content-custom">
         <div class="modal-header-custom">
-            <h5>Assinar Aula</h5>
+            <h5>ASSINAR AULA</h5>
             <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
         </div>
-        <form action="{{ url_for('main.add_attendance') }}" method="POST">
-            <div class="mb-3">
-                <label class="form-label">Data da Aula</label>
-                <input type="date" name="date" class="form-control" required value="{{ now_date }}">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Aluno</label>
-                <select name="student_id" class="form-select" required>
-                    <option value="">Selecione o aluno...</option>
-                    {% for s in students %}
-                    <option value="{{ s.id }}">{{ s.name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Aula / Horário</label>
-                <select name="schedule_id" class="form-select" required>
-                    <option value="">Selecione a aula...</option>
-                    {% for sch in schedules %}
-                    <option value="{{ sch.id }}">{{ sch.day_of_week | capitalize }} - {{ sch.start_time }} ({{ sch.course_name or 'Aula' }} - {{ sch.teacher_name }})</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Presença</label>
-                <div class="d-flex gap-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="status" value="presente" id="statusP" checked>
-                        <label class="form-check-label" for="statusP">Presente</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="status" value="ausente" id="statusA">
-                        <label class="form-check-label" for="statusA">Ausente</label>
+        <div class="modal-body-custom">
+            <form action="{{ url_for('main.add_attendance') }}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label">DATA DA AULA</label>
+                    <input type="date" name="date" class="form-control" required value="{{ now_date }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">ALUNO</label>
+                    <select name="student_id" class="form-select uppercase-input" required>
+                        <option value="">SELECIONE O ALUNO...</option>
+                        {% for s in students %}
+                        <option value="{{ s.id }}">{{ s.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">AULA / HORÁRIO</label>
+                    <select name="schedule_id" class="form-select uppercase-input" required>
+                        <option value="">SELECIONE A AULA...</option>
+                        {% for sch in schedules %}
+                        <option value="{{ sch.id }}">{{ sch.day_of_week | upper }} - {{ sch.start_time }} ({{ (sch.course_name or 'AULA') | upper }} - {{ sch.teacher_name | upper }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">PRESENÇA</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" value="presente" id="statusP" checked>
+                            <label class="form-check-label" for="statusP">PRESENTE</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" value="ausente" id="statusA">
+                            <label class="form-check-label" for="statusA">AUSENTE</label>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="text-end mt-4">
-                <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Registrar</button>
-            </div>
-        </form>
+                <div class="text-end mt-4 mb-2">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">REGISTRAR</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -129,31 +133,30 @@
         const end = start + itemsPerPage;
         const pageData = filteredData.slice(start, end);
 
-        pageData.forEach(item => {
+        pageData.forEach((item, index) => {
             const row = `
-                <tr>
+                <tr class="fade-in" style="animation-delay: ${index * 0.05}s">
                     <td class="ps-4 align-middle">
-                        <div class="d-flex align-items-center">
-                            <div class="dropdown me-3">
-                                <button class="btn btn-link text-muted p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fas fa-cog"></i>
-                                </button>
-                                <ul class="dropdown-menu shadow border-0">
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="alert('Funcionalidade de edição em desenvolvimento.')"><i class="fas fa-edit me-2 text-primary"></i> Editar</a></li>
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="alert('Data: ${item.date}\\nAluno: ${item.student_name}\\nAula: ${item.course_name}')"><i class="fas fa-eye me-2 text-info"></i> Visualizar</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="/attendance/delete/${item.id}" onclick="return confirm('Excluir registro?')"><i class="fas fa-trash me-2"></i> Excluir</a></li>
-                                </ul>
-                            </div>
-                            ${item.date}
+                        <div class="dropdown">
+                            <button class="btn btn-link text-muted p-0 border-0 gear-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <ul class="dropdown-menu shadow border-0">
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="alert('Funcionalidade de edição em desenvolvimento.')"><i class="fas fa-edit me-2 text-primary"></i> EDITAR</a></li>
+                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="alert('DATA: ${item.date}\\nALUNO: ${item.student_name.toUpperCase()}\\nAULA: ${item.course_name.toUpperCase()}')"><i class="fas fa-eye me-2 text-info"></i> VISUALIZAR</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/attendance/delete/${item.id}" onclick="return confirm('Excluir registro?')"><i class="fas fa-trash me-2"></i> EXCLUIR</a></li>
+                            </ul>
                         </div>
                     </td>
-                    <td class="align-middle"><strong>${item.student_name}</strong></td>
-                    <td class="align-middle">${item.course_name}</td>
-                    <td class="align-middle text-muted">${item.teacher_name}</td>
+                    <td class="align-middle text-muted">${item.id}</td>
+                    <td class="align-middle">${item.date}</td>
+                    <td class="align-middle"><strong>${item.student_name.toUpperCase()}</strong></td>
+                    <td class="align-middle">${item.course_name.toUpperCase()}</td>
+                    <td class="align-middle text-muted">${item.teacher_name.toUpperCase()}</td>
                     <td class="align-middle">
                         <span class="badge ${item.badgeClass}">
-                            ${item.statusDisplay}
+                            ${item.statusDisplay.toUpperCase()}
                         </span>
                     </td>
                 </tr>
@@ -184,19 +187,45 @@
     }
 
     document.getElementById('filterBtn').addEventListener('click', () => {
-        const term = document.getElementById('searchInput').value.toLowerCase();
-        filteredData = allData.filter(item =>
-            item.student_name.toLowerCase().includes(term) ||
-            item.course_name.toLowerCase().includes(term) ||
-            item.teacher_name.toLowerCase().includes(term) ||
-            item.date.includes(term)
-        );
-        currentPage = 1;
-        renderTable();
+        const btn = document.getElementById('filterBtn');
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Filtrando...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            filteredData = allData.filter(item =>
+                item.student_name.toLowerCase().includes(term) ||
+                item.course_name.toLowerCase().includes(term) ||
+                item.teacher_name.toLowerCase().includes(term) ||
+                item.date.includes(term)
+            );
+            currentPage = 1;
+            renderTable();
+
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }, 400);
     });
 
     document.addEventListener('DOMContentLoaded', () => {
         renderTable();
+
+        // Uppercase enforcement on input
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('uppercase-input')) {
+                e.target.value = e.target.value.toUpperCase();
+            }
+        });
+
+        // Ensure all forms convert data to uppercase before submit
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                form.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(input => {
+                    input.value = input.value.toUpperCase();
+                });
+            });
+        });
     });
 
     function openModal(id) {
