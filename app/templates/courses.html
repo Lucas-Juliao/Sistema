@@ -17,8 +17,8 @@
 </div>
 
 <div class="d-flex justify-content-start mb-2">
-    <button class="btn-subtle" onclick="openModal('addModal')">
-        <i class="fas fa-plus-circle me-1"></i> Inserir novo curso
+    <button class="btn-insert" onclick="openModal('addModal')">
+        Inserir
     </button>
 </div>
 
@@ -28,10 +28,9 @@
             <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4" style="width: 35%;">Nome do Curso</th>
+                        <th class="ps-4" style="width: 50%;">Nome do Curso</th>
                         <th style="width: 20%;">Carga Horária</th>
                         <th style="width: 30%;">Professor Responsável</th>
-                        <th class="text-center pe-4" style="width: 15%;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -131,7 +130,7 @@
         tbody.innerHTML = '';
 
         if (filteredData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="3" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
             document.getElementById('pagination').innerHTML = '';
             return;
         }
@@ -144,7 +143,20 @@
             const row = `
                 <tr>
                     <td class="ps-4 align-middle">
-                        <strong>${course.name}</strong>
+                        <div class="d-flex align-items-center">
+                            <div class="dropdown me-3">
+                                <button class="btn btn-link text-muted p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                                <ul class="dropdown-menu shadow border-0">
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${course.id}', '${course.name}', '${course.workload}', '${course.teacher_id}')"><i class="fas fa-edit me-2 text-primary"></i> Editar</a></li>
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewCourse('${course.id}', '${course.name}', '${course.workload}', '${course.teacher_id}')"><i class="fas fa-eye me-2 text-info"></i> Visualizar</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="/courses/delete/${course.id}" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="fas fa-trash me-2"></i> Excluir</a></li>
+                                </ul>
+                            </div>
+                            <strong>${course.name}</strong>
+                        </div>
                     </td>
                     <td class="align-middle">
                         <span class="badge bg-light text-dark border">
@@ -155,15 +167,6 @@
                         ${course.teacher_name ?
                             `<i class="fas fa-chalkboard-teacher me-1"></i> ${course.teacher_name}` :
                             `<span class="text-warning"><i class="fas fa-exclamation-triangle me-1"></i> Sem professor</span>`}
-                    </td>
-                    <td class="text-center pe-4 align-middle">
-                        <button class="btn btn-sm btn-light text-primary border me-1" title="Editar"
-                            onclick="openEditModal('${course.id}', '${course.name}', '${course.workload}', '${course.teacher_id}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <a href="/courses/delete/${course.id}" class="btn btn-sm btn-light text-danger border" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
                     </td>
                 </tr>
             `;
@@ -220,7 +223,24 @@
         document.getElementById('editName').value = name;
         document.getElementById('editWorkload').value = workload;
         document.getElementById('editTeacherId').value = teacherId;
+
+        // Reset read-only status
+        document.getElementById('editName').readOnly = false;
+        document.getElementById('editWorkload').readOnly = false;
+        document.getElementById('editTeacherId').disabled = false;
+        document.querySelector('#editForm button[type="submit"]').style.display = "inline-block";
+        document.querySelector('#editModal h5').innerText = "Editar Curso";
+
         openModal('editModal');
+    }
+
+    function viewCourse(id, name, workload, teacherId) {
+        openEditModal(id, name, workload, teacherId);
+        document.getElementById('editName').readOnly = true;
+        document.getElementById('editWorkload').readOnly = true;
+        document.getElementById('editTeacherId').disabled = true;
+        document.querySelector('#editForm button[type="submit"]').style.display = "none";
+        document.querySelector('#editModal h5').innerText = "Visualizar Curso";
     }
 
     window.onclick = function(event) {

@@ -17,8 +17,8 @@
 </div>
 
 <div class="d-flex justify-content-start mb-2">
-    <button class="btn-subtle" onclick="openModal('addModal')">
-        <i class="fas fa-plus-circle me-1"></i> Nova assinatura
+    <button class="btn-insert" onclick="openModal('addModal')">
+        Inserir
     </button>
 </div>
 
@@ -28,12 +28,11 @@
             <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4">Data</th>
+                        <th class="ps-4" style="width: 20%;">Data</th>
                         <th>Aluno</th>
                         <th>Curso / Aula</th>
                         <th>Professor</th>
                         <th>Status</th>
-                        <th class="text-center pe-4">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,7 +120,7 @@
         tbody.innerHTML = '';
 
         if (filteredData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
             document.getElementById('pagination').innerHTML = '';
             return;
         }
@@ -133,7 +132,22 @@
         pageData.forEach(item => {
             const row = `
                 <tr>
-                    <td class="ps-4 align-middle">${item.date}</td>
+                    <td class="ps-4 align-middle">
+                        <div class="d-flex align-items-center">
+                            <div class="dropdown me-3">
+                                <button class="btn btn-link text-muted p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                                <ul class="dropdown-menu shadow border-0">
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="alert('Funcionalidade de edição em desenvolvimento.')"><i class="fas fa-edit me-2 text-primary"></i> Editar</a></li>
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="alert('Data: ${item.date}\\nAluno: ${item.student_name}\\nAula: ${item.course_name}')"><i class="fas fa-eye me-2 text-info"></i> Visualizar</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="/attendance/delete/${item.id}" onclick="return confirm('Excluir registro?')"><i class="fas fa-trash me-2"></i> Excluir</a></li>
+                                </ul>
+                            </div>
+                            ${item.date}
+                        </div>
+                    </td>
                     <td class="align-middle"><strong>${item.student_name}</strong></td>
                     <td class="align-middle">${item.course_name}</td>
                     <td class="align-middle text-muted">${item.teacher_name}</td>
@@ -141,11 +155,6 @@
                         <span class="badge ${item.badgeClass}">
                             ${item.statusDisplay}
                         </span>
-                    </td>
-                    <td class="text-center pe-4 align-middle">
-                        <a href="/attendance/delete/${item.id}" class="btn btn-sm btn-light text-danger border" onclick="return confirm('Excluir registro?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
                     </td>
                 </tr>
             `;

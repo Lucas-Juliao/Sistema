@@ -260,6 +260,27 @@ main {
     color: #adb5bd;
 }
 
+.btn-insert {
+    background-color: #f0f7ff;
+    border: 1px solid #cde4ff;
+    color: #0056b3;
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.btn-insert:hover {
+    background-color: #e1f0ff;
+    color: #004085;
+    border-color: #b8d9ff;
+}
+
 .pagination-container {
     padding: 15px;
     display: flex;

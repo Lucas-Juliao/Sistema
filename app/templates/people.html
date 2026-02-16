@@ -17,8 +17,8 @@
 </div>
 
 <div class="d-flex justify-content-start mb-2">
-    <button class="btn-subtle" onclick="openModal('addModal')">
-        <i class="fas fa-plus-circle me-1"></i> Inserir nova pessoa
+    <button class="btn-insert" onclick="openModal('addModal')">
+        Inserir
     </button>
 </div>
 
@@ -28,11 +28,10 @@
             <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4" style="width: 30%;">Nome</th>
+                        <th class="ps-4" style="width: 45%;">Nome</th>
                         <th style="width: 15%;">Tipo</th>
                         <th style="width: 25%;">E-mail</th>
                         <th style="width: 15%;">Telefone</th>
-                        <th class="text-center pe-4" style="width: 15%;">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -140,7 +139,7 @@
         tbody.innerHTML = '';
 
         if (filteredData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
             document.getElementById('pagination').innerHTML = '';
             return;
         }
@@ -154,6 +153,17 @@
                 <tr>
                     <td class="ps-4 align-middle">
                         <div class="d-flex align-items-center">
+                            <div class="dropdown me-3">
+                                <button class="btn btn-link text-muted p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                                <ul class="dropdown-menu shadow border-0">
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}')"><i class="fas fa-edit me-2 text-primary"></i> Editar</a></li>
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewPerson('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}')"><i class="fas fa-eye me-2 text-info"></i> Visualizar</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" href="/people/delete/${person.id}" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="fas fa-trash me-2"></i> Excluir</a></li>
+                                </ul>
+                            </div>
                             <div class="rounded-circle bg-blue text-white d-flex align-items-center justify-content-center me-3" style="width: 35px; height: 35px; flex-shrink: 0;">
                                 ${person.name[0].toUpperCase()}
                             </div>
@@ -167,14 +177,6 @@
                     </td>
                     <td class="align-middle text-muted">${person.email || '-'}</td>
                     <td class="align-middle text-muted">${person.phone || '-'}</td>
-                    <td class="text-center pe-4 align-middle">
-                        <button class="btn btn-sm btn-light text-primary border me-1" title="Editar" onclick="openEditModal('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <a href="/people/delete/${person.id}" class="btn btn-sm btn-light text-danger border" title="Excluir" onclick="return confirm('Tem certeza que deseja excluir?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </td>
                 </tr>
             `;
             tbody.innerHTML += row;
@@ -233,7 +235,26 @@
         document.getElementById('editType').value = type;
         document.getElementById('editEmail').value = email;
         document.getElementById('editPhone').value = phone;
+
+        // Reset read-only status
+        document.getElementById('editName').readOnly = false;
+        document.getElementById('editType').disabled = false;
+        document.getElementById('editEmail').readOnly = false;
+        document.getElementById('editPhone').readOnly = false;
+        document.querySelector('#editForm button[type="submit"]').style.display = "inline-block";
+        document.querySelector('#editModal h5').innerText = "Editar Pessoa";
+
         openModal('editModal');
+    }
+
+    function viewPerson(id, name, type, email, phone) {
+        openEditModal(id, name, type, email, phone);
+        document.getElementById('editName').readOnly = true;
+        document.getElementById('editType').disabled = true;
+        document.getElementById('editEmail').readOnly = true;
+        document.getElementById('editPhone').readOnly = true;
+        document.querySelector('#editForm button[type="submit"]').style.display = "none";
+        document.querySelector('#editModal h5').innerText = "Visualizar Pessoa";
     }
 
     // Fechar modal ao clicar fora dele
