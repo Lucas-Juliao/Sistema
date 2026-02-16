@@ -172,13 +172,14 @@ def add_schedule():
     start_time = request.form.get('start_time')
     end_time = request.form.get('end_time')
     course_name = request.form.get('course_name')
+    room = request.form.get('room')
 
     if teacher_id and day_of_week and start_time and end_time:
         db = get_db()
         db.execute('''
-            INSERT INTO schedules (teacher_id, day_of_week, start_time, end_time, course_name)
-            VALUES (?, ?, ?, ?, ?)
-        ''', (teacher_id, day_of_week, start_time, end_time, course_name))
+            INSERT INTO schedules (teacher_id, day_of_week, start_time, end_time, course_name, room)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (teacher_id, day_of_week, start_time, end_time, course_name, room))
         db.commit()
         db.close()
 
@@ -193,14 +194,15 @@ def edit_schedule(id):
     start_time = request.form.get('start_time')
     end_time = request.form.get('end_time')
     course_name = request.form.get('course_name')
+    room = request.form.get('room')
 
     if teacher_id and day_of_week and start_time and end_time:
         db = get_db()
         db.execute('''
             UPDATE schedules
-            SET teacher_id = ?, day_of_week = ?, start_time = ?, end_time = ?, course_name = ?
+            SET teacher_id = ?, day_of_week = ?, start_time = ?, end_time = ?, course_name = ?, room = ?
             WHERE id = ?
-        ''', (teacher_id, day_of_week, start_time, end_time, course_name, id))
+        ''', (teacher_id, day_of_week, start_time, end_time, course_name, room, id))
         db.commit()
         db.close()
 

@@ -62,9 +62,17 @@ def init_db():
         start_time TEXT NOT NULL,
         end_time TEXT NOT NULL,
         course_name TEXT,
+        room TEXT,
         FOREIGN KEY (teacher_id) REFERENCES people (id)
     )
     ''')
+
+    # Garantir que a coluna 'room' existe caso a tabela já tenha sido criada anteriormente
+    try:
+        cursor.execute("ALTER TABLE schedules ADD COLUMN room TEXT")
+    except sqlite3.OperationalError:
+        # Coluna já existe
+        pass
 
     # Tabela de Presença (Assinatura de aula)
     cursor.execute('''

@@ -12,6 +12,7 @@
                         <th>Professor</th>
                         <th>Horário</th>
                         <th>Curso</th>
+                        <th>Sala</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -28,6 +29,7 @@
                             <span class="badge-time">{{ item.start_time }} - {{ item.end_time }}</span>
                         </td>
                         <td>{{ item.course_name }}</td>
+                        <td><i class="fas fa-door-open me-1 text-muted"></i> {{ item.room or '-' }}</td>
                         <td>
                             <span class="status-indicator"></span> Disponível
                         </td>
