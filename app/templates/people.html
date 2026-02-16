@@ -28,7 +28,8 @@
             <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
                 <thead class="bg-light">
                     <tr>
-                        <th class="ps-4" style="width: 45%;">Nome</th>
+                        <th class="ps-4" style="width: 10%;">ID</th>
+                        <th style="width: 35%;">Nome</th>
                         <th style="width: 15%;">Tipo</th>
                         <th style="width: 25%;">E-mail</th>
                         <th style="width: 15%;">Telefone</th>
@@ -53,13 +54,19 @@
             <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
         </div>
         <form action="{{ url_for('main.add_person') }}" method="POST">
-            <div class="mb-3">
-                <label class="form-label">Nome</label>
-                <input type="text" name="name" class="form-control" required>
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label class="form-label">Nome</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Data de Nascimento</label>
+                    <input type="date" name="birth_date" class="form-control">
+                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Tipo</label>
-                <select name="type" class="form-select" required>
+                <select name="type" class="form-select" onchange="toggleGuardianSection(this, 'addGuardianSection')" required>
                     <option value="student">Aluno</option>
                     <option value="teacher">Professor</option>
                 </select>
@@ -70,7 +77,24 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Telefone</label>
-                <input type="text" name="phone" class="form-control">
+                <input type="text" name="phone" class="form-control phone-mask" placeholder="(00) 00000-0000">
+            </div>
+
+            <div id="addGuardianSection">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" name="has_guardian" id="addHasGuardian" onchange="toggleGuardianFields(this, 'addGuardianFields')">
+                    <label class="form-check-label" for="addHasGuardian">Possui Responsável?</label>
+                </div>
+                <div id="addGuardianFields" style="display: none;" class="p-3 bg-light border rounded mb-3">
+                    <div class="mb-3">
+                        <label class="form-label">Nome do Responsável</label>
+                        <input type="text" name="guardian_name" class="form-control">
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label">Telefone do Responsável</label>
+                        <input type="text" name="guardian_phone" class="form-control phone-mask" placeholder="(00) 00000-0000">
+                    </div>
+                </div>
             </div>
             <div class="text-end mt-4">
                 <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">Cancelar</button>
@@ -88,13 +112,19 @@
             <span class="close-custom" onclick="closeModal('editModal')">&times;</span>
         </div>
         <form id="editForm" method="POST">
-            <div class="mb-3">
-                <label class="form-label">Nome</label>
-                <input type="text" name="name" id="editName" class="form-control" required>
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label class="form-label">Nome</label>
+                    <input type="text" name="name" id="editName" class="form-control" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Data de Nascimento</label>
+                    <input type="date" name="birth_date" id="editBirthDate" class="form-control">
+                </div>
             </div>
             <div class="mb-3">
                 <label class="form-label">Tipo</label>
-                <select name="type" id="editType" class="form-select" required>
+                <select name="type" id="editType" class="form-select" onchange="toggleGuardianSection(this, 'editGuardianSection')" required>
                     <option value="student">Aluno</option>
                     <option value="teacher">Professor</option>
                 </select>
@@ -105,7 +135,24 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Telefone</label>
-                <input type="text" name="phone" id="editPhone" class="form-control">
+                <input type="text" name="phone" id="editPhone" class="form-control phone-mask" placeholder="(00) 00000-0000">
+            </div>
+
+            <div id="editGuardianSection">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" name="has_guardian" id="editHasGuardian" onchange="toggleGuardianFields(this, 'editGuardianFields')">
+                    <label class="form-check-label" for="editHasGuardian">Possui Responsável?</label>
+                </div>
+                <div id="editGuardianFields" style="display: none;" class="p-3 bg-light border rounded mb-3">
+                    <div class="mb-3">
+                        <label class="form-label">Nome do Responsável</label>
+                        <input type="text" name="guardian_name" id="editGuardianName" class="form-control">
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label">Telefone do Responsável</label>
+                        <input type="text" name="guardian_phone" id="editGuardianPhone" class="form-control phone-mask" placeholder="(00) 00000-0000">
+                    </div>
+                </div>
             </div>
             <div class="text-end mt-4">
                 <button type="button" class="btn btn-secondary me-2" onclick="closeModal('editModal')">Cancelar</button>
@@ -124,6 +171,10 @@
             type: "{{ person.type }}",
             email: "{{ person.email or '' }}",
             phone: "{{ person.phone or '' }}",
+            birth_date: "{{ person.birth_date or '' }}",
+            has_guardian: {{ person.has_guardian or 0 }},
+            guardian_name: "{{ person.guardian_name or '' }}",
+            guardian_phone: "{{ person.guardian_phone or '' }}",
             typeDisplay: "{{ 'Professor' if person.type == 'teacher' else 'Aluno' }}",
             badgeClass: "{{ 'bg-info' if person.type == 'teacher' else 'bg-success' }}"
         },
@@ -134,12 +185,26 @@
     const itemsPerPage = 5;
     let currentPage = 1;
 
+    function formatPhone(value) {
+        if (!value) return '-';
+        const cleaned = ('' + value).replace(/\D/g, '');
+        const match = cleaned.match(/^(\d{2})(\d{5})(\d{4})$/);
+        if (match) {
+            return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+        }
+        const match2 = cleaned.match(/^(\d{2})(\d{4})(\d{4})$/);
+        if (match2) {
+            return '(' + match2[1] + ') ' + match2[2] + '-' + match2[3];
+        }
+        return value;
+    }
+
     function renderTable() {
         const tbody = document.querySelector('#dataTable tbody');
         tbody.innerHTML = '';
 
         if (filteredData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
             document.getElementById('pagination').innerHTML = '';
             return;
         }
@@ -151,15 +216,16 @@
         pageData.forEach(person => {
             const row = `
                 <tr>
-                    <td class="ps-4 align-middle">
+                    <td class="ps-4 align-middle text-muted">#${person.id}</td>
+                    <td class="align-middle">
                         <div class="d-flex align-items-center">
                             <div class="dropdown me-3">
                                 <button class="btn btn-link text-muted p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-cog"></i>
                                 </button>
                                 <ul class="dropdown-menu shadow border-0">
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}')"><i class="fas fa-edit me-2 text-primary"></i> Editar</a></li>
-                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewPerson('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}')"><i class="fas fa-eye me-2 text-info"></i> Visualizar</a></li>
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="openEditModal('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}', '${person.birth_date}', ${person.has_guardian}, '${person.guardian_name}', '${person.guardian_phone}')"><i class="fas fa-edit me-2 text-primary"></i> Editar</a></li>
+                                    <li><a class="dropdown-item" href="javascript:void(0)" onclick="viewPerson('${person.id}', '${person.name}', '${person.type}', '${person.email}', '${person.phone}', '${person.birth_date}', ${person.has_guardian}, '${person.guardian_name}', '${person.guardian_phone}')"><i class="fas fa-eye me-2 text-info"></i> Visualizar</a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><a class="dropdown-item text-danger" href="/people/delete/${person.id}" onclick="return confirm('Tem certeza que deseja excluir?')"><i class="fas fa-trash me-2"></i> Excluir</a></li>
                                 </ul>
@@ -176,7 +242,7 @@
                         </span>
                     </td>
                     <td class="align-middle text-muted">${person.email || '-'}</td>
-                    <td class="align-middle text-muted">${person.phone || '-'}</td>
+                    <td class="align-middle text-muted">${formatPhone(person.phone)}</td>
                 </tr>
             `;
             tbody.innerHTML += row;
@@ -218,6 +284,8 @@
     // Inicializar tabela vazia
     document.addEventListener('DOMContentLoaded', () => {
         renderTable();
+        // Ensure guardian section matches initial "Aluno" selection in add modal
+        toggleGuardianSection(document.querySelector('select[name="type"]'), 'addGuardianSection');
     });
 
     function openModal(id) {
@@ -228,34 +296,88 @@
         document.getElementById(id).style.display = "none";
     }
 
-    function openEditModal(id, name, type, email, phone) {
+    function toggleGuardianSection(selectElement, sectionId) {
+        const section = document.getElementById(sectionId);
+        if (selectElement.value === 'student') {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
+    }
+
+    function toggleGuardianFields(checkbox, fieldsId) {
+        const fields = document.getElementById(fieldsId);
+        fields.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    function applyPhoneMask(input) {
+        input.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+
+            if (value.length > 10) {
+                value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                value = value.replace(/^(\d{2})(\d{0,5}).*/, '($1) $2');
+            } else if (value.length > 0) {
+                value = value.replace(/^(\d{0,2}).*/, '($1');
+            }
+            e.target.value = value;
+        });
+    }
+
+    function openEditModal(id, name, type, email, phone, birth_date, has_guardian, guardian_name, guardian_phone) {
         const form = document.getElementById('editForm');
         form.action = "/people/edit/" + id;
         document.getElementById('editName').value = name;
         document.getElementById('editType').value = type;
         document.getElementById('editEmail').value = email;
         document.getElementById('editPhone').value = phone;
+        document.getElementById('editBirthDate').value = birth_date;
+        document.getElementById('editHasGuardian').checked = has_guardian === 1;
+        document.getElementById('editGuardianName').value = guardian_name;
+        document.getElementById('editGuardianPhone').value = guardian_phone;
+
+        // Handle visibility
+        toggleGuardianSection(document.getElementById('editType'), 'editGuardianSection');
+        toggleGuardianFields(document.getElementById('editHasGuardian'), 'editGuardianFields');
 
         // Reset read-only status
         document.getElementById('editName').readOnly = false;
+        document.getElementById('editBirthDate').readOnly = false;
         document.getElementById('editType').disabled = false;
         document.getElementById('editEmail').readOnly = false;
         document.getElementById('editPhone').readOnly = false;
+        document.getElementById('editHasGuardian').disabled = false;
+        document.getElementById('editGuardianName').readOnly = false;
+        document.getElementById('editGuardianPhone').readOnly = false;
+
         document.querySelector('#editForm button[type="submit"]').style.display = "inline-block";
         document.querySelector('#editModal h5').innerText = "Editar Pessoa";
 
         openModal('editModal');
     }
 
-    function viewPerson(id, name, type, email, phone) {
-        openEditModal(id, name, type, email, phone);
+    function viewPerson(id, name, type, email, phone, birth_date, has_guardian, guardian_name, guardian_phone) {
+        openEditModal(id, name, type, email, phone, birth_date, has_guardian, guardian_name, guardian_phone);
         document.getElementById('editName').readOnly = true;
+        document.getElementById('editBirthDate').readOnly = true;
         document.getElementById('editType').disabled = true;
         document.getElementById('editEmail').readOnly = true;
         document.getElementById('editPhone').readOnly = true;
+        document.getElementById('editHasGuardian').disabled = true;
+        document.getElementById('editGuardianName').readOnly = true;
+        document.getElementById('editGuardianPhone').readOnly = true;
+
         document.querySelector('#editForm button[type="submit"]').style.display = "none";
         document.querySelector('#editModal h5').innerText = "Visualizar Pessoa";
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.phone-mask').forEach(applyPhoneMask);
+    });
 
     // Fechar modal ao clicar fora dele
     window.onclick = function(event) {

@@ -38,9 +38,26 @@ def init_db():
         name TEXT NOT NULL,
         type TEXT NOT NULL, -- 'student' ou 'teacher'
         email TEXT,
-        phone TEXT
+        phone TEXT,
+        birth_date TEXT,
+        has_guardian INTEGER DEFAULT 0,
+        guardian_name TEXT,
+        guardian_phone TEXT
     )
     ''')
+
+    # Adicionar novas colunas se não existirem
+    new_people_columns = [
+        ('birth_date', 'TEXT'),
+        ('has_guardian', 'INTEGER DEFAULT 0'),
+        ('guardian_name', 'TEXT'),
+        ('guardian_phone', 'TEXT')
+    ]
+    for col_name, col_type in new_people_columns:
+        try:
+            cursor.execute(f"ALTER TABLE people ADD COLUMN {col_name} {col_type}")
+        except sqlite3.OperationalError:
+            pass
 
     # Tabela de Cursos
     cursor.execute('''

@@ -47,11 +47,17 @@ def add_person():
     type = request.form.get('type')
     email = request.form.get('email')
     phone = request.form.get('phone')
+    birth_date = request.form.get('birth_date')
+    has_guardian = 1 if request.form.get('has_guardian') else 0
+    guardian_name = request.form.get('guardian_name')
+    guardian_phone = request.form.get('guardian_phone')
 
     if name and type:
         db = get_db()
-        db.execute('INSERT INTO people (name, type, email, phone) VALUES (?, ?, ?, ?)',
-                   (name, type, email, phone))
+        db.execute('''
+            INSERT INTO people (name, type, email, phone, birth_date, has_guardian, guardian_name, guardian_phone)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (name, type, email, phone, birth_date, has_guardian, guardian_name, guardian_phone))
         db.commit()
         db.close()
 
@@ -65,11 +71,18 @@ def edit_person(id):
     type = request.form.get('type')
     email = request.form.get('email')
     phone = request.form.get('phone')
+    birth_date = request.form.get('birth_date')
+    has_guardian = 1 if request.form.get('has_guardian') else 0
+    guardian_name = request.form.get('guardian_name')
+    guardian_phone = request.form.get('guardian_phone')
 
     if name and type:
         db = get_db()
-        db.execute('UPDATE people SET name = ?, type = ?, email = ?, phone = ? WHERE id = ?',
-                   (name, type, email, phone, id))
+        db.execute('''
+            UPDATE people
+            SET name = ?, type = ?, email = ?, phone = ?, birth_date = ?, has_guardian = ?, guardian_name = ?, guardian_phone = ?
+            WHERE id = ?
+        ''', (name, type, email, phone, birth_date, has_guardian, guardian_name, guardian_phone, id))
         db.commit()
         db.close()
 
