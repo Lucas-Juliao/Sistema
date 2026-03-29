@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% block title %}Assinatura de Aulas - Safira MusiCloud{% endblock %}
+
+{% block content %}
+<div class="breadcrumb-path">
+    <a href="{{ url_for('main.menu') }}">Menu</a> > <span>Assinatura de Presença</span>
+</div>
+
+<div class="filter-bar mb-3">
+    <div class="input-group">
+        <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar aluno, curso, professor...">
+        <button class="btn btn-outline-primary" type="button" id="filterBtn">
+            <i class="fas fa-filter me-1"></i> Filtrar
+        </button>
+    </div>
+</div>
+
+<div class="d-flex justify-content-start mb-2">
+    <button class="btn-insert" onclick="openModal('addModal')">
+        Inserir
+    </button>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="dataTable" style="min-width: 800px;">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4" style="width: 5%;"></th>
+                        <th style="width: 10%;">ID</th>
+                        <th style="width: 15%;">Data</th>
+                        <th>Aluno</th>
+                        <th>Curso / Aula</th>
+                        <th>Professor</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- JS vai carregar os dados aqui -->
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination-container" id="pagination"></div>
+    </div>
+</div>
+
+<!-- Modal Adicionar -->
+<div id="addModal" class="modal-custom">
+    <div class="modal-content-custom">
+        <div class="modal-header-custom">
+            <h5>ASSINAR AULA</h5>
+            <span class="close-custom" onclick="closeModal('addModal')">&times;</span>
+        </div>
+        <div class="modal-body-custom">
+            <form action="{{ url_for('main.add_attendance') }}" method="POST">
+                <div class="mb-3">
+                    <label class="form-label">DATA DA AULA</label>
+                    <input type="date" name="date" class="form-control" required value="{{ now_date }}">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">ALUNO</label>
+                    <select name="student_id" class="form-select uppercase-input" required>
+                        <option value="">SELECIONE O ALUNO...</option>
+                        {% for s in students %}
+                        <option value="{{ s.id }}">{{ s.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">AULA / HORÁRIO</label>
+                    <select name="schedule_id" class="form-select uppercase-input" required>
+                        <option value="">SELECIONE A AULA...</option>
+                        {% for sch in schedules %}
+                        <option value="{{ sch.id }}">{{ sch.day_of_week | upper }} - {{ sch.start_time }} ({{ (sch.course_name or 'AULA') | upper }} - {{ sch.teacher_name | upper }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">PRESENÇA</label>
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" value="presente" id="statusP" checked>
+                            <label class="form-check-label" for="statusP">PRESENTE</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" value="ausente" id="statusA">
+                            <label class="form-check-label" for="statusA">AUSENTE</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-end mt-4 mb-2">
+                    <button type="button" class="btn btn-secondary me-2" onclick="closeModal('addModal')">CANCELAR</button>
+                    <button type="submit" class="btn btn-primary">REGISTRAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const allData = [
+        {% for item in attendances %}
+        {
+            id: "{{ item.id }}",
+            date: "{{ item.date }}",
+            student_name: "{{ item.student_name }}",
+            course_name: "{{ item.course_name or 'Aula Instrumental' }}",
+            teacher_name: "{{ item.teacher_name }}",
+            status: "{{ item.status }}",
+            statusDisplay: "{{ item.status | capitalize }}",
+            badgeClass: "{{ 'bg-success' if item.status == 'presente' else 'bg-danger' }}"
+        },
+        {% endfor %}
+    ];
+
+    let filteredData = [];
+    const itemsPerPage = 5;
+    let currentPage = 1;
+
+    function renderTable() {
+        const tbody = document.querySelector('#dataTable tbody');
+        tbody.innerHTML = '';
+
+        if (filteredData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted">Clique em 'Filtrar' para carregar os dados.</td></tr>`;
+            document.getElementById('pagination').innerHTML = '';
+            return;
+        }
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const pageData = filteredData.slice(start, end);
+
+        pageData.forEach((item, index) => {
+            const row = `
+                <tr class="fade-in" style="animation-delay: ${index * 0.05}s">
+                    <td class="ps-4 align-middle">
+                        <div class="dropdown">
+                            <button class="btn btn-link text-muted p-0 border-0 gear-icon" type="button" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                            <ul class="dropdown-menu shadow border">
+                                <li><a class="dropdown-item" href="#" onclick="alert('Funcionalidade de edição em desenvolvimento.'); return false;"><i class="fas fa-edit me-2 text-primary"></i> EDITAR</a></li>
+                                <li><a class="dropdown-item" href="#" onclick="alert('DATA: ${item.date}\\nALUNO: ${item.student_name.toUpperCase()}\\nAULA: ${item.course_name.toUpperCase()}'); return false;"><i class="fas fa-eye me-2 text-info"></i> VISUALIZAR</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/attendance/delete/${item.id}" onclick="return confirm('Excluir registro?')"><i class="fas fa-trash me-2"></i> EXCLUIR</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td class="align-middle text-muted">${item.id}</td>
+                    <td class="align-middle">${item.date}</td>
+                    <td class="align-middle"><strong>${item.student_name.toUpperCase()}</strong></td>
+                    <td class="align-middle">${item.course_name.toUpperCase()}</td>
+                    <td class="align-middle text-muted">${item.teacher_name.toUpperCase()}</td>
+                    <td class="align-middle">
+                        <span class="badge ${item.badgeClass}">
+                            ${item.statusDisplay.toUpperCase()}
+                        </span>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const container = document.getElementById('pagination');
+        container.innerHTML = '';
+        const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+        if (totalPages <= 1) return;
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.innerText = i;
+            btn.className = `btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+            btn.onclick = () => {
+                currentPage = i;
+                renderTable();
+            };
+            container.appendChild(btn);
+        }
+    }
+
+    document.getElementById('filterBtn').addEventListener('click', () => {
+        const btn = document.getElementById('filterBtn');
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Filtrando...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            filteredData = allData.filter(item =>
+                item.student_name.toLowerCase().includes(term) ||
+                item.course_name.toLowerCase().includes(term) ||
+                item.teacher_name.toLowerCase().includes(term) ||
+                item.date.includes(term)
+            );
+            currentPage = 1;
+            renderTable();
+
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }, 400);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTable();
+
+        // Uppercase enforcement on input
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('uppercase-input')) {
+                e.target.value = e.target.value.toUpperCase();
+            }
+        });
+
+        // Ensure all forms convert data to uppercase before submit
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                form.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(input => {
+                    input.value = input.value.toUpperCase();
+                });
+            });
+        });
+    });
+
+    function openModal(id) {
+        document.getElementById(id).style.display = "block";
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-custom')) {
+            event.target.style.display = "none";
+        }
+    }
+
+    // Set today's date in the input if it's empty
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.querySelector('input[type="date"]');
+        if (dateInput && !dateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+        }
+    });
+</script>
+
+<style>
+    .modal-custom {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content-custom {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 550px;
+        max-width: 90%;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .modal-header-custom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .close-custom {
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
